@@ -77,4 +77,4 @@ source .env
 ./build.sh -p angel_eye -u switch
 ```
 After run these code, you can do p4 simulation.
-The after code is summarized in `mydocker.sh` and run1.sh.
+The after code is summarized in `mydocker.sh` and `run1.sh`.
