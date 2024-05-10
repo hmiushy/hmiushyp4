@@ -40,7 +40,7 @@ And you are getting an RTNETLINK operation not permitted with a docker container
 ([Reference](https://stackoverflow.com/questions/27708376/why-am-i-getting-an-rtnetlink-operation-not-permitted-when-using-pipework-with-d)). <br>
 (I researched `RTNETLINK answers: Operation not permitted`)
 
-## Resolution [Reference](https://stackoverflow.com/questions/27708376/why-am-i-getting-an-rtnetlink-operation-not-permitted-when-using-pipework-with-d)
+## Resolution ([Reference](https://stackoverflow.com/questions/27708376/why-am-i-getting-an-rtnetlink-operation-not-permitted-when-using-pipework-with-d))
 You have to run the code below.
 ```bash
 docker run --cap-add=NET_ADMIN -it -v ${PROJECT_DIR}:/home/build/src --name debian-stretch-sde-${USER}-970-2 debian:build-docker-new
