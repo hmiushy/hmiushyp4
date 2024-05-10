@@ -62,7 +62,8 @@ cd ..
 
 2. Set env and create container
 ```bash
-docker run -it -v ${PROJECT_DIR}:/home/build/src --name debian-stretch-sde-${USER}-970 debian:build-docker-new
+source .env
+docker run --cap-add=NET_ADMIN -it -v ${PROJECT_DIR}:/home/build/src --name debian-stretch-sde-${USER}-970-2 debian:build-docker-new
 # or docker exec -it <container hash> bash
 ```
 
