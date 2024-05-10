@@ -31,7 +31,7 @@ Cannot find device "veth24"
 Cannot find device "veth25"
 ...
 ```
-This means you cannot add ip link such as `veth0` and `veth1` before ip command.
+This means you cannot add ip link such as `veth0` and `veth1` before `ip link set dev` command.
 ```bash
 # failed to adding the veth here (L19 of veth_setup.sh)
 ip link add name $intf0 type veth peer name $intf1 &> /dev/null
