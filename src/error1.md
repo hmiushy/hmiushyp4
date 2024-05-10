@@ -33,13 +33,13 @@ Cannot find device "veth25"
 ```
 This means you cannot add ip link such as `veth0` and `veth1` before ip command.
 ```bash
-# failed to adding the veth here (L19)
+# failed to adding the veth here (L19 of veth_setup.sh)
 ip link add name $intf0 type veth peer name $intf1 &> /dev/null
 ```
 And you are getting an RTNETLINK operation not permitted with a docker container
 ([Reference]()). <br>
 
-## Resolution
+## Resolution ([Reference]()). <br>
 You have to run the code below.
 ```bash
 docker run --cap-add=NET_ADMIN -it -v ${PROJECT_DIR}:/home/build/src --name debian-stretch-sde-${USER}-970-2 debian:build-docker-new
