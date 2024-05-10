@@ -2,6 +2,7 @@
 #set -u
 ## get the container id
 function print_help() { ## Output help message
+    echo "Code to start up docker container from the second time."
     echo "USAGE: bash $(basename ""$0"") -i <container number>"
     echo "1. Check the container number."
     echo "  `docker ps -a`"
