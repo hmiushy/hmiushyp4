@@ -96,3 +96,6 @@ Not this code:
 docker run --cap-add=NET_ADMIN -it -v ${PROJECT_DIR}:/home/build/src --name debian-stretch-sde-${USER}-970-2 debian:build-docker-new
 ```
 `--privileged` means creating a container with all root privileges to the host computer. Might not be very desirable...
+
+## Resolution 2: the problem `2024-05-11 05:51:37.642962 BF_PLTFM ERROR - Error unable to find cdc_ethernet port`
+Next, I want to fix this problem.
