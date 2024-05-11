@@ -79,4 +79,21 @@ bfshell>
 
 ```
 
-This
+I want to resolve the problem below:
+```bash
+...
+sysctl: setting key "vm.nr_hugepages": Read-only file system
+sysctl: setting key "vm.nr_hugepages": Read-only file system
+mount: /mnt/huge: permission denied.
+...
+```
+## Resolve this problem
+Run the code below.
+```bash
+docker run --cap-add=NET_ADMIN -it --privileged -v ${PROJECT_DIR}:/home/build/src --name debian-stretch-sde-${USER}-970-2 debian:build-docker-new
+```
+Not this code:
+```bash
+docker run --cap-add=NET_ADMIN -it -v ${PROJECT_DIR}:/home/build/src --name debian-stretch-sde-${USER}-970-2 debian:build-docker-new
+```
+`--privileged` means creating a container with all root privileges to the host computer. Might not be very esirble...

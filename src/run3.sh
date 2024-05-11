@@ -1,3 +1,6 @@
+## 1. Create P4studio env
+## 2. 
+
 ./build.sh -p angel_eye -u switch
 cd ${SDE}
 . ./tools/set_sde.bash

@@ -28,11 +28,12 @@ if [ $HELP == true ]; then
     print_help
 fi
 
-dhash=`docker ps -a | grep "970" | awk '{print $1}'`
+
+dhash=`docker ps -a | grep "970"`
+CID=$(((CID-1)*11+1))
 dhash=` echo $dhash| awk -v val="$CID" '{print $val}'`
 docker start ${dhash}
 docker exec -it ${dhash} bash
-#docker exec -it ${dhash} bash -c "bash --rcfile mybash.sh"
 
 # memo
 # bash ./tools/p4_build.sh ./tools/shared/switch_tofino2_y1.p4 --with-tofino2
