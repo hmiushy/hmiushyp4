@@ -1,5 +1,5 @@
 ## Usual
-"""bash
+```bash
 Using SDE /home/cnsrl/bf-sde-9.7.0.10210-cpr
 Using SDE_INSTALL /home/cnsrl/bf-sde-9.7.0.10210-cpr/install
 Setting up DMA Memory Pool
@@ -76,4 +76,4 @@ bfruntime gRPC server started on 0.0.0.0:50052
     
 
 bfshell> 
-"""
+```
