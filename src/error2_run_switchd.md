@@ -99,3 +99,136 @@ docker run --cap-add=NET_ADMIN -it -v ${PROJECT_DIR}:/home/build/src --name debi
 
 ## Resolution 2: the problem `2024-05-11 05:51:37.642962 BF_PLTFM ERROR - Error unable to find cdc_ethernet port`
 Next, I want to fix this problem.
+
+
+Normally, when `./run_tofino_model.sh -p switch_tofino2_y1 --arch Tofino2` is executed and `./run_switchd.sh -p switch_tofino2_y1 --arch Tofino2` is executed, the following is displayed on `./run_tofino_model.sh`'s terminal.
+```bash
+...
+Adding interface veth250 as port 2
+Simulation target: Asic Model
+Using TCP port range: 8001-8004
+Listen socket created
+bind done on port 8001. Listening..
+Waiting for incoming connections...
+CLI listening on port 8000
+Connection accepted on port 8001
+Client socket created
+Connected on port 8002
+INFO: DRU sim MTI initialized successfully
+Tofino Verification Model - Version a2e46ca-dirty
+Created 1 packet processing threads
+:-:-:<0,-,0>:Waiting for packets to process
+LOGS captured in: ./model_20240510_212217.log
+:05-10 21:22:45.144120:    PORT UP asic 0 port 2
+LOGS captured in: ./model_20240510_212217.log
+:05-10 21:22:45.144144:    Setting logging fn
+:05-10 21:22:45.144163:    Registering handler for tx
+Opening p4 target config file '/home/cnsrl/bf-sde-9.7.0.10210-cpr/install/share/p4/targets/tofino2/switch_tofino2_y1.conf' ...
+:05-10 21:22:45.144174:    PORT UP asic 0 port 8
+:05-10 21:22:45.144183:    PORT UP asic 0 port 9
+:05-10 21:22:45.144190:    PORT UP asic 0 port 10
+Loaded p4 target config file
+:05-10 21:22:45.144197:    PORT UP asic 0 port 11
+Device 0: Pipe 0: loading P4 name lookup file share/tofino2pd/switch_tofino2_y1/pipe/context.json found in /home/cnsrl/bf-sde-9.7.0.10210-cpr/install/share/p4/targets/tofino2/switch_tofino2_y1.conf
+Opening context file '/home/cnsrl/bf-sde-9.7.0.10210-cpr/install/share/tofino2pd/switch_tofino2_y1/pipe/context.json' ...
+:05-10 21:22:45.144207:    PORT UP asic 0 port 12
+:05-10 21:22:45.144217:    PORT UP asic 0 port 13
+:05-10 21:22:45.144225:    PORT UP asic 0 port 14
+:05-10 21:22:45.144233:    PORT UP asic 0 port 15
+:05-10 21:22:45.144239:    PORT UP asic 0 port 16
+:05-10 21:22:45.144246:    PORT UP asic 0 port 17
+:05-10 21:22:45.144253:    PORT UP asic 0 port 18
+:05-10 21:22:45.144262:    PORT UP asic 0 port 19
+:05-10 21:22:45.144268:    PORT UP asic 0 port 20
+:05-10 21:22:45.144275:    PORT UP asic 0 port 21
+:05-10 21:22:45.144281:    PORT UP asic 0 port 22
+:05-10 21:22:45.144288:    PORT UP asic 0 port 23
+:05-10 21:22:45.144294:    PORT UP asic 0 port 24
+Loaded context file
+Device 0: Pipe 1: loading P4 name lookup file share/tofino2pd/switch_tofino2_y1/pipe/context.json found in /home/cnsrl/bf-sde-9.7.0.10210-cpr/install/share/p4/targets/tofino2/switch_tofino2_y1.conf
+Opening context file '/home/cnsrl/bf-sde-9.7.0.10210-cpr/install/share/tofino2pd/switch_tofino2_y1/pipe/context.json' ...
+Loaded context file
+Device 0: Pipe 2: loading P4 name lookup file share/tofino2pd/switch_tofino2_y1/pipe/context.json found in /home/cnsrl/bf-sde-9.7.0.10210-cpr/install/share/p4/targets/tofino2/switch_tofino2_y1.conf
+Opening context file '/home/cnsrl/bf-sde-9.7.0.10210-cpr/install/share/tofino2pd/switch_tofino2_y1/pipe/context.json' ...
+Loaded context file
+Device 0: Pipe 3: loading P4 name lookup file share/tofino2pd/switch_tofino2_y1/pipe/context.json found in /home/cnsrl/bf-sde-9.7.0.10210-cpr/install/share/p4/targets/tofino2/switch_tofino2_y1.conf
+Opening context file '/home/cnsrl/bf-sde-9.7.0.10210-cpr/install/share/tofino2pd/switch_tofino2_y1/pipe/context.json' ...
+Loaded context file
+:05-10 21:22:45.302084:     Updating model log flags: clearing 0xffffffff ffffffff, setting 0x00000000 0000000f
+:05-10 21:22:45.306296:    :-:-:<0,0,0>:Updating p4 log flags: clearing 0xffffffff ffffffff, setting 0x00000000 0000007f
+:05-10 21:22:45.310592:    :-:-:<0,0,0>:Updating tofino log flags: clearing 0xffffffff ffffffff, setting 0x00000000 0000007f
+:05-10 21:22:45.314841:    :-:-:<0,0,0>:Updating packet log flags: clearing 0xffffffff ffffffff, setting 0x00000000 0000007f
+Dropping excess privileges...
+:05-10 21:22:45.482255:    :-:-:<0,0,->:LearningFilter::clear : Excessive clearing of filter 1 !!! Nothing to clear
+:05-10 21:22:45.482299:    :-:-:<0,0,->:LearningFilter::clear : Excessive clearing of filter 1 !!! Nothing to clear
+:05-10 21:22:45.482605:    :-:-:<0,1,->:LearningFilter::clear : Excessive clearing of filter 1 !!! Nothing to clear
+:05-10 21:22:45.482619:    :-:-:<0,1,->:LearningFilter::clear : Excessive clearing of filter 1 !!! Nothing to clear
+:05-10 21:22:45.482925:    :-:-:<0,2,->:LearningFilter::clear : Excessive clearing of filter 1 !!! Nothing to clear
+:05-10 21:22:45.482938:    :-:-:<0,2,->:LearningFilter::clear : Excessive clearing of filter 1 !!! Nothing to clear
+:05-10 21:22:45.483244:    :-:-:<0,3,->:LearningFilter::clear : Excessive clearing of filter 1 !!! Nothing to clear
+:05-10 21:22:45.483256:    :-:-:<0,3,->:LearningFilter::clear : Excessive clearing of filter 1 !!! Nothing to clear
+Reg channel closed. Restart reg connection...
+Reg thread termination requested..
+DRU thread terminating..
+Reg thread calling harlyn_lld_re_init
+Re-Init link to bf-drivers...
+Listen socket created
+bind done on port 8001. Listening..
+Waiting for incoming connections...
+Connection accepted on port 8001
+Client socket created
+Connected on port 8002
+INFO: DRU MTI already initialized
+Re-Init link to bf-drivers...done
+Reg thread terminating..
+:05-11 16:25:09.939478:    :-:-:<0,-,0>:Begin packet processing
+:05-11 16:25:09.939519:    :-:-:<0,-,0>:Chip=0 Thread=0 Pipe=*: PktsIn=0 PktsOut=0 PktsTOT=0  Waits=6855
+Tofino Verification Model - Version a2e46ca-dirty
+Opening context file '/home/cnsrl/bf-sde-9.7.0.10210-cpr/install/share/tofino2pd/switch_tofino2_y1/pipe/context.json' ...
+Loaded context file
+Opening context file '/home/cnsrl/bf-sde-9.7.0.10210-cpr/install/share/tofino2pd/switch_tofino2_y1/pipe/context.json' ...
+Loaded context file
+Opening context file '/home/cnsrl/bf-sde-9.7.0.10210-cpr/install/share/tofino2pd/switch_tofino2_y1/pipe/context.json' ...
+Loaded context file
+Opening context file '/home/cnsrl/bf-sde-9.7.0.10210-cpr/install/share/tofino2pd/switch_tofino2_y1/pipe/context.json' ...
+Loaded context file
+Created 1 packet processing threads
+:05-11 16:25:10.531875:    :-:-:<0,-,0>:Waiting for packets to process
+:05-11 16:25:10.868241:    :-:-:<0,0,->:LearningFilter::clear : Excessive clearing of filter 1 !!! Nothing to clear
+:05-11 16:25:10.868286:    :-:-:<0,0,->:LearningFilter::clear : Excessive clearing of filter 1 !!! Nothing to clear
+:05-11 16:25:10.868606:    :-:-:<0,1,->:LearningFilter::clear : Excessive clearing of filter 1 !!! Nothing to clear
+:05-11 16:25:10.868618:    :-:-:<0,1,->:LearningFilter::clear : Excessive clearing of filter 1 !!! Nothing to clear
+:05-11 16:25:10.868933:    :-:-:<0,2,->:LearningFilter::clear : Excessive clearing of filter 1 !!! Nothing to clear
+:05-11 16:25:10.868944:    :-:-:<0,2,->:LearningFilter::clear : Excessive clearing of filter 1 !!! Nothing to clear
+:05-11 16:25:10.869263:    :-:-:<0,3,->:LearningFilter::clear : Excessive clearing of filter 1 !!! Nothing to clear
+:05-11 16:25:10.869276:    :-:-:<0,3,->:LearningFilter::clear : Excessive clearing of filter 1 !!! Nothing to clear
+Reg channel closed. Restart reg connection...
+Reg thread termination requested..
+DRU thread terminating..
+Reg thread calling harlyn_lld_re_init
+Re-Init link to bf-drivers...
+Listen socket created
+bind done on port 8001. Listening..
+Waiting for incoming connections...
+^C:05-13 09:57:12.412511:    PORT DOWN asic 0 port 2
+:05-13 09:57:12.412629:    PORT DOWN asic 0 port 8
+:05-13 09:57:12.412652:    PORT DOWN asic 0 port 9
+:05-13 09:57:12.412669:    PORT DOWN asic 0 port 10
+:05-13 09:57:12.412684:    PORT DOWN asic 0 port 11
+:05-13 09:57:12.412699:    PORT DOWN asic 0 port 12
+:05-13 09:57:12.412714:    PORT DOWN asic 0 port 13
+:05-13 09:57:12.412728:    PORT DOWN asic 0 port 14
+:05-13 09:57:12.412744:    PORT DOWN asic 0 port 15
+:05-13 09:57:12.412758:    PORT DOWN asic 0 port 16
+:05-13 09:57:12.412772:    PORT DOWN asic 0 port 17
+:05-13 09:57:12.412805:    PORT DOWN asic 0 port 18
+:05-13 09:57:12.412819:    PORT DOWN asic 0 port 19
+:05-13 09:57:12.412834:    PORT DOWN asic 0 port 20
+:05-13 09:57:12.412848:    PORT DOWN asic 0 port 21
+:05-13 09:57:12.412862:    PORT DOWN asic 0 port 22
+:05-13 09:57:12.412876:    PORT DOWN asic 0 port 23
+:05-13 09:57:12.412891:    PORT DOWN asic 0 port 24
+:05-13 09:57:13.017234:    :-:-:<0,-,0>:Begin packet processing
+:05-13 09:57:13.017342:    :-:-:<0,-,0>:Chip=0 Thread=0 Pipe=*: PktsIn=0 PktsOut=0 PktsTOT=0  Waits=14952
+done
+```
