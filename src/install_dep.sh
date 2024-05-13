@@ -1,11 +1,8 @@
 #!/bin/bash
-#HOMEUSER="${HOME}"
-HOMEUSER=${HOME}
 OSNAME="Ubuntu"
 OSVERS="20.04"
 JOBS=5
 SDE_INSTALL=${HOME}/bf-sde-9.7.0/install
->>>>>>> aafad8ec938c5b768514fd66e70de08aa0813686
 KEYWORD="apt-get"
 WITHPROTO="yes"
 
