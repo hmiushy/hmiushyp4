@@ -1,10 +1,9 @@
 #!/bin/bash
-#HOMEUSER="/home/user1"
-HOMEUSER=${HOME}
+HOMEUSER="/home/user1"
 OSNAME="Ubuntu"
 OSVERS="20.04"
 JOBS=5
-SDEINSTALL=${HOMEUSER}/bf-sde-9.7.0/install
+SDEINSTALL=${HOMEUSER}bf-sde-9.7.0/install
 KEYWORD="apt-get"
 WITHPROTO="yes"
 
