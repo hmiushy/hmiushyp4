@@ -21,10 +21,11 @@ Error: Problem occurred while installing pi
 git clone --depth=1 -b v3.18.1 https://github.com/google/protobuf.git
 cd protobuf/
 ./autogen.sh
-./configure
+./configure --prefix=/home/user1/bf-sde-9.7.0/install #./configure
 make
 make install
-ldconfig
+sudo ldconfig
+sudo -E python3 -m  pip install protobuf==3.18.1
 ```
 ## grpc
 ``` bash
@@ -37,6 +38,17 @@ cmake ../..
 make
 make install
 ldconfig
+
+- Building GRPC ... 
+		COMMAND: [git clone https://github.com/google/grpc.git]
+	 	- Patch1 Makefile created ... 
+	 	- Patch2 Makefile created ... 
+		COMMAND: [git checkout tags/v1.17.0]
+		COMMAND: [git submodule update --init --recursive]
+		COMMAND: [patch < /home/user1/bf-sde-9.7.0/p4studio/dependencies/source/grpc-makefile-patch1_240514_110532]
+		COMMAND: [git apply /home/user1/bf-sde-9.7.0/p4studio/dependencies/source/grpc-makefile-patch2_240514_110532]
+		COMMAND: [PKG_CONFIG_PATH=/home/user1/bf-sde-9.7.0/install/lib/pkgconfig:$PKG_CONFIG_PATH make prefix=/home/user1/bf-sde-9.7.0/install CFLAGS="-Wno-error" CXXFLAGS="-Wno-error=class-memaccess -Wno-error=ignored-qualifiers -Wno-error=stringop-truncation -Wno-stringop-overflow  -Wno-error=unused-function -Wno-error" -j5]
+		COMMAND: [make install prefix=/home/user1/bf-sde-9.7.0/install]
 ```
 
 ```bash
