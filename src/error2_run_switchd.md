@@ -98,7 +98,8 @@ docker run --cap-add=NET_ADMIN -it -v ${PROJECT_DIR}:/home/build/src --name debi
 `--privileged` means creating a container with all root privileges to the host computer. Might not be very desirable...
 
 ## Resolution 2: the problem `2024-05-11 05:51:37.642962 BF_PLTFM ERROR - Error unable to find cdc_ethernet port`
-Next, I want to fix this problem. <br>
+Next, I want to fix this problem. <br> <br>
+1. Copy `pkgsrc`
 I copied `pkgsrc` of `bf-sde-9.7.0.10210-cpr` and replaced it with this file.
 and run (`./build.sh -p angel_eye -u switch`) the code with certain lines commented out as shown below:
 ```bash
@@ -138,7 +139,11 @@ echo ./p4studio build $TARGET
 ...
 ```
 I already get p4 dependencies before runnning, so comment out these lines.
-
+A few hours later... <br>
+I cannot resolve the problem. <br> <br>
+Next, copy `install` folder.
+I tried to copy install folder in bf-sde.9.7.0.10210-cpr to my vm environment.
+Finally, it works...
 ### Memo
 Normally, when `./run_tofino_model.sh -p switch_tofino2_y1 --arch Tofino2` is executed and `./run_switchd.sh -p switch_tofino2_y1 --arch Tofino2` is executed, the following is displayed on `./run_tofino_model.sh`'s terminal.
 ```bash
