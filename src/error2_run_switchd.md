@@ -143,7 +143,7 @@ A few hours later... <br>
 I cannot resolve the problem. <br> <br>
 Next, copy `install` folder.
 I tried to copy install folder in bf-sde.9.7.0.10210-cpr to my vm environment.
-Finally, it works...
+Finally, it works... Maybe, there are some errors at binary file of something into `$SDE_INSTALL` 
 ### Memo
 Normally, when `./run_tofino_model.sh -p switch_tofino2_y1 --arch Tofino2` is executed and `./run_switchd.sh -p switch_tofino2_y1 --arch Tofino2` is executed, the following is displayed on `./run_tofino_model.sh`'s terminal.
 ```bash
