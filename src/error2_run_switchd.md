@@ -98,9 +98,48 @@ docker run --cap-add=NET_ADMIN -it -v ${PROJECT_DIR}:/home/build/src --name debi
 `--privileged` means creating a container with all root privileges to the host computer. Might not be very desirable...
 
 ## Resolution 2: the problem `2024-05-11 05:51:37.642962 BF_PLTFM ERROR - Error unable to find cdc_ethernet port`
-Next, I want to fix this problem.
+Next, I want to fix this problem. <br>
+I copied `pkgsrc` of `bf-sde-9.7.0.10210-cpr` and replaced it with this file.
+and run (`./build.sh -p angel_eye -u switch`) the code with certain lines commented out as shown below:
+```bash
+...
+# echo ==== Pack $(basename $BSP)/packages/bf-platforms-$SDE_VERSION.tgz ====
+# cd $BSP
+# tar -vzcf $BSP/packages/bf-platforms-$SDE_VERSION.tgz bf-platforms-$SDE_VERSION
 
+# echo ==== Pack $(basename $BSP).tgz =====
+# cd $PROJECT_DIR
+# tar -vzcf $BSP.tgz $(basename $BSP)
 
+# echo ==== Pack SDE Packages =====
+# cd $SDE/packages
+# SDE_PACKAGES=("p4-compilers-9.7.0" "tofino-model-9.7.0" "p4-examples-9.7.0" "ptf-modules-9.7.0" "switch-p4-16-9.7.0" "bf-syslibs-9.7.0" "bf-diags-9.7.0" "bf-drivers-9.7.0" "p4o-1.0" "bf-utils-9.7.0" "p4i-9.7.0")
+# for d in ${SDE_PACKAGES[@]}; do
+#     echo "$d"
+#     tar -zcf $SDE/packages/$d.tgz $d
+# done
+
+# Build Tofino 2 Profile
+cd $SDE/p4studio
+# echo Clean p4studio environment
+# ./p4studio clean -y
+# rm -rf $SDE/pkgsrc
+# echo Start to Build Platform: $PLATFORM , Chip: ${CHIP_ARCH} with $USER_PROFILE
+# echo ./install-p4studio-dependencies.sh
+# ./install-p4studio-dependencies.sh
+# echo ./p4studio dependencies install
+# ./p4studio dependencies install
+# echo ./p4studio packages extract
+# ./p4studio packages extract
+echo ./p4studio configure --bsp-path $BSP.tgz $USER_PROFILE asic $PLATFORM_NAME $CHIP_ARCH
+./p4studio configure --bsp-path $BSP.tgz $USER_PROFILE asic $PLATFORM_NAME $CHIP_ARCH
+echo ./p4studio build $TARGET
+./p4studio build $TARGET
+...
+```
+I already get p4 dependencies before runnning, so comment out these lines.
+
+### Memo
 Normally, when `./run_tofino_model.sh -p switch_tofino2_y1 --arch Tofino2` is executed and `./run_switchd.sh -p switch_tofino2_y1 --arch Tofino2` is executed, the following is displayed on `./run_tofino_model.sh`'s terminal.
 ```bash
 ...
