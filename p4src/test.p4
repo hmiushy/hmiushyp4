@@ -18,32 +18,24 @@ control SwitchIngress(
     in ingress_intrinsic_metadata_from_parser_t ig_intr_from_prsr,
     inout ingress_intrinsic_metadata_for_deparser_t ig_intr_md_for_dprsr,
     inout ingress_intrinsic_metadata_for_tm_t ig_intr_md_for_tm){
-    action drop() {
-        // mark_to_drop(ig_intr_md_for_dprsr);
+    
+    action set_port(bit<9> port) {
+        ig_intr_md_for_tm.ucast_egress_port = port;
     }
-    action set(bit<32> a) {
-        hdr.ipv4.srcAddr = a;
-    }
-    table ipv4_lpm {
+    table ipv4_ex {
         key = { 
             hdr.ipv4.dstAddr : exact;
         }
         
         actions = { 
-            set;
-            drop; 
+            set_port;
             NoAction; 
-        }
-        
-        const entries = {
-            1: set(1);
-            2: set(2);
         }
         size           = 1024; 
         default_action = NoAction();
     }
     apply {
-        ipv4_lpm.apply();
+        ipv4_ex.apply();
     }
 }
 
