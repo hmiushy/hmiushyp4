@@ -1,7 +1,9 @@
 
+# Error of `bfrt_pythoon` when executing `run_switchd.sh`
 ## error in non-vm
 1. sudo -s
-2. 
+2. ./run_switchd.sh -p `name` --arch Tofino2
+   I got the error below:
 ```bash
 bfruntime gRPC server started on 0.0.0.0:50052
 
@@ -79,7 +81,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '/usr/lib/python2.7/lib-
 sys.path.append(os.path.join(os.path.dirname(__file__), '/home/user1/barefoot/barefoot-sde-9.7.0/bf-sde-9.7.0/install/lib/python3.8/lib-dynload'))
 sys.path.append(os.path.join(os.path.dirname(__file__), '/home/user1/barefoot/barefoot-sde-9.7.0/bf-sde-9.7.0/install/lib/python3.8/lib2to3'))
 ```
-This file maybe read the python code first, so I set the environment variables but I get some errors like these:
+This file maybe read the python code first, so I set the environment variables but I got some errors like these:
 ```python
 bfshell> bfrt_python
 cwd : /home/user1/barefoot/barefoot-sde-9.7.0/bf-sde-9.7.0
@@ -134,8 +136,9 @@ Finally, got the latest version.
  '/usr/lib/python3/dist-packages']
 
 ```
+# Try to `run_tofino_model.sh and run_switchd.sh` in Ubuntu18.
 ## ldd [reference](https://www.silicloud.com/ja/blog/linux%E3%81%A7glibc%E3%81%AE%E3%83%90%E3%83%BC%E3%82%B8%E3%83%A7%E3%83%B3%E3%82%92%E3%82%A2%E3%83%83%E3%83%97%E3%82%B0%E3%83%AC%E3%83%BC%E3%83%89%E3%81%99%E3%82%8B%E6%96%B9%E6%B3%95/)[2](https://stackoverflow.com/questions/74740941/how-can-i-resolve-this-issue-libm-so-6-version-glibc-2-29-not-found-c-c)
-I tried to update ldd vm
+I tried to update ldd
 ```bash
 wget -4c https://ftp.gnu.org/gnu/glibc/glibc-2.29.tar.gz
 tar -xf glibc-x.x.tar.gz

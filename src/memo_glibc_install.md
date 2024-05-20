@@ -18,6 +18,8 @@ bf_switchd: /lib/x86_64-linux-gnu/libm.so.6: version `GLIBC_2.29' not found (req
 try to update or install glibc.
 [Ref](https://stackoverflow.com/questions/72513993/how-to-install-glibc-2-29-or-higher-in-ubuntu-18-04)
 [Ref](https://stackoverflow.com/questions/74740941/how-can-i-resolve-this-issue-libm-so-6-version-glibc-2-29-not-found-c-c)
+[Ref](https://www.silicloud.com/ja/blog/linux%E3%81%A7glibc%E3%81%AE%E3%83%90%E3%83%BC%E3%82%B8%E3%83%A7%E3%83%B3%E3%82%92%E3%82%A2%E3%83%83%E3%83%97%E3%82%B0%E3%83%AC%E3%83%BC%E3%83%89%E3%81%99%E3%82%8B%E6%96%B9%E6%B3%95/)
+[How to update glibc](https://tutorials.tinkink.net/en/linux/how-to-update-glibc.html)
 ## script
 ```bash
 wget -c https://ftp.gnu.org/gnu/glibc/glibc-2.29.tar.gz
