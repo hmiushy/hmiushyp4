@@ -13,24 +13,21 @@ SDE_PYTHON_27 = os.path.join(SDE_INSTALL, 'lib', 'python2.7', 'site-packages')
 
 sys.path.append(SDE_PYTHON_27)
 sys.path.append(os.path.join(SDE_PYTHON_27, 'tofino'))
+
+SDE_PYTHON_38 = os.path.join(SDE_INSTALL, 'lib', 'python3.8', 'site-packages')
+sys.path.append(SDE_PYTHON_38)
+sys.path.append(os.path.join(SDE_PYTHON_38, 'tofino'))
+"""
+
+"""
+
 """
 If getting some error, check the environmental variables.
 """
-try:
-    import grpc
-    import bfrt_grpc.bfruntime_pb2 as bfruntime_pb2
-    import bfrt_grpc.client as bfrt_client
-    from scapy.all import *
-    import ipaddress
-    from ptf import config
-    from ptf.thriftutils import *
-    import ptf.testutils as testutils
+pprint.pprint(sys.path)
+import bfrt_grpc.bfruntime_pb2 as bfruntime_pb2
+import bfrt_grpc.client as bfrt_client
 
-    import google.rpc.code_pb2 as code_pb2
-    from functools import partial
-except:
-    print("Please check your env val.")
-    break
 #
 # Connect to the BF Runtime Server
 #

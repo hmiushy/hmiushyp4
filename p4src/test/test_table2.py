@@ -28,12 +28,6 @@ sys.path.append(SDE_INSTALL+'/lib/python3.8/lib-dynload')
 sys.path.append(SDE_INSTALL+'/bin')
 sys.path.append('/usr/lib/python3/dist-packages')
 
-sys.path.append(os.path.join(os.path.dirname(__file__), '/home/cnsrl/bf-sde-9.7.0.10210-cpr/install/lib/python3.8/site-packages/tofino/bfrt_grpc'))
-sys.path.append(os.path.join(os.path.dirname(__file__), '/home/cnsrl/bf-sde-9.7.0.10210-cpr/install/lib/python3.8/site-packages/tofino'))
-sys.path.append(os.path.join(os.path.dirname(__file__), '/home/cnsrl/bf-sde-9.7.0.10210-cpr/install/lib/python3.8/site-packages/tofino2pd/diag'))
-sys.path.append(os.path.join(os.path.dirname(__file__), '/home/cnsrl/bf-sde-9.7.0.10210-cpr/install/lib/python3.8/site-packages/tofino_pd_api'))
-sys.path.append(os.path.join(os.path.dirname(__file__), '/home/cnsrl/bf-sde-9.7.0.10210-cpr/install/include'))
-
 import grpc
 import bfrt_grpc.bfruntime_pb2 as bfruntime_pb2
 import bfrt_grpc.client as bfrt_client
