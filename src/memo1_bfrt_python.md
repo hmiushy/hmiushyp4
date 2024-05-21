@@ -4,7 +4,7 @@
 `DataTuple`
 `KeyTuple`
 
-```
+```python
 #!/usr/bin/env python
 ## bfrt_python ./p4src/test/bfrt_starter.py
 from __future__ import print_function
