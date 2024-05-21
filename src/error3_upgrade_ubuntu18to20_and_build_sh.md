@@ -12,4 +12,5 @@ I ran:
 $ pip3.8
 bash: /home/build/src/bf-sde-9.7.0/install/bin/pip3.8: /home/cnsrl/bf-sde-9.7.0.10210-cpr/install/bin/python3.8: bad interpreter: No such file or directory
 ```
-This is because I copied the original code
+This is because I copied the original code.
+You have to revise the path of the pip3.8. Just see the pip3.8 in the path, and change the first line to your env path.
