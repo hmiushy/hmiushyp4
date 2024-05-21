@@ -3,10 +3,10 @@
 #include <core.p4>
 #include <t2na.p4>
 
-// have to place these files on the same folder
-#include "headers.p4"
-#include "types.p4"
-#include "parde.p4"
+#include "std_hdrs.p4"
+#include "const.p4"
+#include "parser.p4"
+
 /************************************************************************* 
 **************  I N G R E S S   P R O C E S S I N G   ******************* 
 *************************************************************************/
@@ -18,7 +18,16 @@ control SwitchIngress(
         in ingress_intrinsic_metadata_from_parser_t ig_intr_from_prsr,
         inout ingress_intrinsic_metadata_for_deparser_t ig_intr_md_for_dprsr,
         inout ingress_intrinsic_metadata_for_tm_t ig_intr_md_for_tm) {
-
+    
+    Register<pair, bit<32>>(32w1024) test_reg;
+    RegisterAction<pair, bit<32>, bit<32>>(test_reg) test_reg_action = {
+        void apply(inout pair value, out bit<32> read_value){
+            read_value = value.second;
+            value.first = value.first + 1;
+            value.second = value.second + 100;
+        }
+    };
+    
     action set_port(bit<9> port) {
         ig_intr_md_for_tm.ucast_egress_port = port;
     }
