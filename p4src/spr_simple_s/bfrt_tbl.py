@@ -16,21 +16,18 @@ sys.path.append(os.path.join(SDE_PYTHON_27, 'tofino'))
 """
 If getting some error, check the environmental variables.
 """
-try:
-    import grpc
-    import bfrt_grpc.bfruntime_pb2 as bfruntime_pb2
-    import bfrt_grpc.client as bfrt_client
-    from scapy.all import *
-    import ipaddress
-    from ptf import config
-    from ptf.thriftutils import *
-    import ptf.testutils as testutils
 
-    import google.rpc.code_pb2 as code_pb2
-    from functools import partial
-except:
-    print("Please check your env val.")
-    break
+import grpc
+import bfrt_grpc.bfruntime_pb2 as bfruntime_pb2
+import bfrt_grpc.client as bfrt_client
+from scapy.all import *
+import ipaddress
+from ptf import config
+from ptf.thriftutils import *
+import ptf.testutils as testutils
+
+import google.rpc.code_pb2 as code_pb2
+from functools import partial
 #
 # Connect to the BF Runtime Server
 #
