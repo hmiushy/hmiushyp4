@@ -71,6 +71,7 @@ the error occured in the file:
 import os
 import sys
 
+
 sys.path.append(os.path.join(os.path.dirname(__file__), '/home/user1/barefoot/barefoot-sde-9.7.0/bf-sde-9.7.0/tools2'))
 sys.path.append(os.path.join(os.path.dirname(__file__), '/home/user1/barefoot/barefoot-sde-9.7.0/bf-sde-9.7.0/install/lib/python3.8'))
 sys.path.append(os.path.join(os.path.dirname(__file__), '/usr/lib/python3/dist-packages'))
@@ -82,6 +83,10 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '/home/user1/barefoot/ba
 sys.path.append(os.path.join(os.path.dirname(__file__), '/home/user1/barefoot/barefoot-sde-9.7.0/bf-sde-9.7.0/install/lib/python3.8/lib2to3'))
 ```
 This file maybe read the python code first, so I set the environment variables but I got some errors like these:
+```python
+
+```
+and
 ```python
 bfshell> bfrt_python
 cwd : /home/user1/barefoot/barefoot-sde-9.7.0/bf-sde-9.7.0
