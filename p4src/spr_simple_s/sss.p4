@@ -19,15 +19,6 @@ control SwitchIngress(
         inout ingress_intrinsic_metadata_for_deparser_t ig_intr_md_for_dprsr,
         inout ingress_intrinsic_metadata_for_tm_t ig_intr_md_for_tm) {
     
-    Register<pair, bit<32>>(32w1024) test_reg;
-    RegisterAction<pair, bit<32>, bit<32>>(test_reg) test_reg_action = {
-        void apply(inout pair value, out bit<32> read_value){
-            read_value = value.second;
-            value.first = value.first + 1;
-            value.second = value.second + 100;
-        }
-    };
-    
     action set_port(bit<9> port) {
         ig_intr_md_for_tm.ucast_egress_port = port;
     }
