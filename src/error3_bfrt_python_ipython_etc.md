@@ -183,3 +183,17 @@ make
 
 ```
 
+
+
+```
+  File "<stdin>", line 1, in <module>
+  File "/home/rdpuser/barefoot/barefoot-sde-9.7.0/bf-sde-9.7.0/install/lib/python3.8/site-packages/tofino/bfrt_grpc/client.py", line 27, in <module>
+    import bfrt_grpc.bfruntime_pb2_grpc as bfruntime_pb2_grpc
+  File "/home/rdpuser/barefoot/barefoot-sde-9.7.0/bf-sde-9.7.0/install/lib/python3.8/site-packages/tofino/bfrt_grpc/bfruntime_pb2_grpc.py", line 4, in <module>
+    import bfruntime_pb2 as bfruntime__pb2
+  File "/home/rdpuser/barefoot/barefoot-sde-9.7.0/bf-sde-9.7.0/install/lib/python3.8/site-packages/tofino/bfrt_grpc/bfruntime_pb2.py", line 6, in <module>
+    from google.protobuf.internal import enum_type_wrapper
+ModuleNotFoundError: No module named 'google.protobuf'
+
+```
+
