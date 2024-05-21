@@ -13,14 +13,15 @@ logger.addHandler(logging.StreamHandler())
 SDE_INSTALL   = os.environ['SDE_INSTALL']
 SDE_PYTHON_27 = os.path.join(SDE_INSTALL, 'lib', 'python2.7', 'site-packages')
 
+SDE_INSTALL = "/home/rdpuser/barefoot/barefoot-sde-9.7.0/bf-sde-9.7.0/install"
 sys.path.append(SDE_PYTHON_27)
 sys.path.append(os.path.join(SDE_PYTHON_27, 'tofino'))
-sys.path.append(os.path.join(os.path.dirname(__file__), '/home/cnsrl/bf-sde-9.7.0.10210-cpr/install/lib/python3.8/site-packages/tofino/bfrt_grpc'))
-sys.path.append(os.path.join(os.path.dirname(__file__), '/home/cnsrl/bf-sde-9.7.0.10210-cpr/install/lib/python3.8/site-packages/tofino'))
-sys.path.append(os.path.join(os.path.dirname(__file__), '/home/cnsrl/bf-sde-9.7.0.10210-cpr/install/lib/python3.8/site-packages/tofino2pd/diag'))
-sys.path.append(os.path.join(os.path.dirname(__file__), '/home/cnsrl/bf-sde-9.7.0.10210-cpr/install/lib/python3.8/site-packages/tofino_pd_api'))
-sys.path.append(os.path.join(os.path.dirname(__file__), '/home/cnsrl/bf-sde-9.7.0.10210-cpr/install/lib/python3.8/site-packages/bf-ptf/ptf'))
-sys.path.append(os.path.join(os.path.dirname(__file__), '/home/cnsrl/bf-sde-9.7.0.10210-cpr/install/include'))
+sys.path.append(os.path.join(os.path.dirname(__file__), SDE_INSTALL+'/lib/python3.8/site-packages/tofino/bfrt_grpc'))
+sys.path.append(os.path.join(os.path.dirname(__file__), SDE_INSTALL+'/install/lib/python3.8/site-packages/tofino'))
+sys.path.append(os.path.join(os.path.dirname(__file__), SDE_INSTALL+'/install/lib/python3.8/site-packages/tofino2pd/diag'))
+sys.path.append(os.path.join(os.path.dirname(__file__), SDE_INSTALL+'/install/lib/python3.8/site-packages/tofino_pd_api'))
+sys.path.append(os.path.join(os.path.dirname(__file__), SDE_INSTALL+'/install/lib/python3.8/site-packages/bf-ptf/ptf'))
+sys.path.append(os.path.join(os.path.dirname(__file__), SDE_INSTALL+'/install/include'))
                 
                 
 

@@ -84,8 +84,29 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '/home/user1/barefoot/ba
 ```
 This file maybe read the python code first, so I set the environment variables but I got some errors like these:
 ```python
+bfshell> bfrt_python 
+Traceback (most recent call last):
+  File "/home/rdpuser/barefoot/barefoot-sde-9.7.0/bf-sde-9.7.0/install/lib/python3.8/bfrtcli.py", line 17, in <module>
+    from bfrtTable import BfRtTable
+  File "/home/rdpuser/barefoot/barefoot-sde-9.7.0/bf-sde-9.7.0/install/lib/python3.8/bfrtTable.py", line 4, in <module>
+    from netaddr import EUI as mac
+ModuleNotFoundError: No module named 'netaddr'
+Failed to load bfrtcli python library
+bfrt_cli_cmd:197 could not initialize bf_rt for the cli. err: 1
+bfshell> bfrt_python
+context.c:54: warning: mpd_setminalloc: ignoring request to set MPD_MINALLOC a second time
+
+Traceback (most recent call last):
+  File "/home/rdpuser/barefoot/barefoot-sde-9.7.0/bf-sde-9.7.0/install/lib/python3.8/bfrtcli.py", line 17, in <module>
+    from bfrtTable import BfRtTable
+  File "/home/rdpuser/barefoot/barefoot-sde-9.7.0/bf-sde-9.7.0/install/lib/python3.8/bfrtTable.py", line 4, in <module>
+    from netaddr import EUI as mac
+ModuleNotFoundError: No module named 'netaddr'
+Failed to load bfrtcli python library
+bfrt_cli_cmd:197 could not initialize bf_rt for the cli. err: 1
 
 ```
+You can resolve this excuting `sudo pip3 install netaddr`,
 and
 ```python
 bfshell> bfrt_python
