@@ -10,24 +10,18 @@ import pprint
 
 SDE_INSTALL   = os.environ['SDE_INSTALL']
 SDE_PYTHON_27 = os.path.join(SDE_INSTALL, 'lib', 'python2.7', 'site-packages')
-
+SDE_PYTHON_38 = os.path.join(SDE_INSTALL, 'lib', 'python3.8', 'site-packages')
 sys.path.append(SDE_PYTHON_27)
 sys.path.append(os.path.join(SDE_PYTHON_27, 'tofino'))
-
-SDE_PYTHON_38 = os.path.join(SDE_INSTALL, 'lib', 'python3.8', 'site-packages')
 sys.path.append(SDE_PYTHON_38)
 sys.path.append(os.path.join(SDE_PYTHON_38, 'tofino'))
-"""
-
-"""
-
+sys.path.append(os.path.join(SDE_PYTHON_38, 'tofino/bfrt_grpc'))
 """
 If getting some error, check the environmental variables.
 """
-pprint.pprint(sys.path)
+
 import bfrt_grpc.bfruntime_pb2 as bfruntime_pb2
 import bfrt_grpc.client as bfrt_client
-
 #
 # Connect to the BF Runtime Server
 #

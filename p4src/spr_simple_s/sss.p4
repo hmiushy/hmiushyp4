@@ -3,6 +3,7 @@
 #include <core.p4>
 #include <t2na.p4>
 
+// have to place these files on the same folder
 #include "headers.p4"
 #include "types.p4"
 #include "parde.p4"

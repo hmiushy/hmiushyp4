@@ -1,1 +1,0 @@
-bfrt.test.pipe.SwitchIngress
