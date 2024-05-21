@@ -20,8 +20,8 @@
     ```
     $SDE_INSTALL/bin/bfshell -b path/to/test_table.py
     ```
-8. check using scapy
-   run wireshark in advance <br>
+8. check using scapy <br>
+   run wireshark in advance 
    ```
    sudo python test_scapy.py
    ```
