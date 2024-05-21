@@ -197,3 +197,10 @@ ModuleNotFoundError: No module named 'google.protobuf'
 
 ```
 
+```
+  NoCompression = cygrpc.CompressionAlgorithm.none
+AttributeError: 'NoneType' object has no attribute 'none'
+
+
+```
+
