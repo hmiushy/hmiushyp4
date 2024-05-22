@@ -37,7 +37,7 @@ control CMS (
     bit<32> cms_info_1;
     bit<32> cms_info_10;
     bit<32> cms_info_11;
-    pair cms_info_11;
+    //    pair cms_info_11;
     Register<pair, bit<32>>(CMS_width, {0,0}) cms_reg_11;
     Register<bit<32>, bit<32>>(CMS_width, 0) cms_reg_1;
     Hash<hash_t>(HashAlgorithm_t.CRC32) hash_1;
@@ -59,11 +59,9 @@ control CMS (
     RegisterAction<pair, bit<32>, bit<32>>(cms_reg_11) cms_get_update_11 = {
         void apply(inout pair value, out bit<32> read_value1, out bit<32> read_value2){
             value.packet_count  = value.packet_count  + 1;
-            //value.packet_length = value.packet_length + (bit<32>)hdr.ipv4.total_len;
-            //read_value  = value.packet_count;
-            //read_value1 = value.packet_count;
-            //read_value2 = value.packet_length;
-            //read_value1 = value;
+            value.packet_length = value.packet_length + (bit<32>)hdr.ipv4.total_len;
+            read_value1 = value.packet_count;
+            read_value2 = value.packet_length;
         }
     };
     
@@ -94,7 +92,7 @@ control CMS (
         cms_info_0 = cms_get_update_0.execute(idx_0);
         cms_info_1 = cms_get_update_1.execute(idx_1);
         //cms_info_1 = cms_get_update_11.execute(idx_1);
-        cms_info_10 = cms_get_update_11.execute(idx_1, conf_info_11);
+        cms_info_10 = cms_get_update_11.execute(idx_1, cms_info_11);
         //test0();
         //test1();
         //bit<32> test;
