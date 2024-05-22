@@ -13,39 +13,15 @@
 /*************************************************
 **********  I N G R E S S   P A R S E R **********
 **************************************************/
-
-parser TofinoIngressParser(
-    packet_in pkt,
-    out ingress_intrinsic_metadata_t ig_intr_md) {
-    state start {
-        pkt.extract(ig_intr_md);
-        transition select(ig_intr_md.resubmit_flag) {
-            1 : parse_resubmit;
-            0 : parse_port_metadata;
-        }
-    }
-
-    state parse_resubmit {
-        transition reject;
-    }
-
-    state parse_port_metadata {
-        pkt.advance(PORT_METADATA_SIZE);
-        transition accept;
-    }
-}
-
-
 parser SwitchIngressParser(
     packet_in pkt,
     out switch_header_t hdr,
     out switch_ingress_metadata_t ig_md,
     out ingress_intrinsic_metadata_t ig_intr_md) {
     
-    TofinoIngressParser() tofino_parser;
-
     state start {
-        tofino_parser.apply(pkt, ig_intr_md);
+        pkt.extract(ig_intr_md);
+        pkt.advance(PORT_METADATA_SIZE);
         transition parse_ethernet;
     }
 
