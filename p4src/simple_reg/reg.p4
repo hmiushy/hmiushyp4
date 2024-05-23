@@ -65,18 +65,6 @@ control CMS (
         }
     };
     
-    /*
-    Register<pair, bit<32>>(32w1024) test_reg;
-    RegisterAction<pair, bit<32>, pair>(test_reg) test_reg_action = {
-        void apply(inout pair value, out pair read_value){
-            //read_value = value.packet_count;
-            read_value = value;
-            value.packet_count = value.packet_count + 1;
-            value.packet_length = value.packet_length + 100;
-        }
-    };
-    */
-
     action key2index_0() {
         hash_id_0 = (hash_t)hash_0.get({hdr.ipv4.src_addr, hdr.ipv4.dst_addr});
         idx_0 = (bit<32>)hash_id_0;
