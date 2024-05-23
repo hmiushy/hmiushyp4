@@ -8,6 +8,7 @@ import logging
 import copy
 import pprint
 import time
+sys.path.append("/usr/lib/python3/dist-packages")
 
 SDE_INSTALL   = os.environ['SDE_INSTALL']
 SDE_PYTHON_27 = os.path.join(SDE_INSTALL, 'lib', 'python2.7', 'site-packages')
@@ -17,6 +18,7 @@ sys.path.append(os.path.join(SDE_PYTHON_27, 'tofino'))
 sys.path.append(SDE_PYTHON_38)
 sys.path.append(os.path.join(SDE_PYTHON_38, 'tofino'))
 sys.path.append(os.path.join(SDE_PYTHON_38, 'tofino/bfrt_grpc'))
+pprint.pprint(sys.path)
 
 import bfrt_grpc.bfruntime_pb2 as bfruntime_pb2
 import bfrt_grpc.client as bfrt_client
