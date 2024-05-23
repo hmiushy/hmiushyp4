@@ -40,17 +40,6 @@ control Count (
             read_value2 = value.packet_length;
         }
     };
-<<<<<<< HEAD:p4src/simple_reg/reg.p4
-    
-    action key2index_0() {
-        hash_id_0 = (hash_t)hash_0.get({hdr.ipv4.src_addr, hdr.ipv4.dst_addr});
-        idx_0 = (bit<32>)hash_id_0;
-    }
-    action key2index_1() {
-        hash_id_1 = (hash_t)hash_1.get({hdr.ipv4.src_addr, hdr.ipv4.dst_addr});
-        idx_1 = (bit<32>)hash_id_1;
-    }
-=======
     RegisterAction<bit<64>, bit<32>, bit<32>>(report_result) repo_action = {
         void apply(inout bit<64> value) {
 
@@ -59,12 +48,7 @@ control Count (
     RegisterAction<bit<64>, bit<48>, bit<48>>(for_debug) debug_tbl = {
         void apply(inout bit<64> value) {
             //value = (bit<32>)ig_intr_from_prsr.global_tstamp;
-<<<<<<< HEAD
-            value = ig_intr_md.ingress_mac_tstamp;
->>>>>>> 89f751bdf08fed9895ab60a240a51f1bec7c1619:p4src/simple_count/main.p4
-=======
             value = (bit<64>)ig_intr_md.ingress_mac_tstamp;
->>>>>>> d98867d81e5e2bec5badb510c67e7627cf92f88c
 
         }
     };
