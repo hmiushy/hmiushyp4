@@ -28,7 +28,7 @@ control Count (
     /*------------------ Count Min Sketch registers and Hash -------------------*/
     Register<pair, bit<32>>(1, {0,0}) just_packet_cnt;
     Register<bit<32>,bit<32>>(END_TIMESTEP) report_result;
-    Register<bit<48>, bit<48>>(1,0) report_point;
+    Register<bit<64>, bit<48>>(1,0) report_point;
     Register<bit<64>, bit<48>>(3,0) for_debug;
 
     /*------------------- All Packet Count registers Action --------------------*/
@@ -41,26 +41,27 @@ control Count (
         }
     };
     RegisterAction<bit<64>, bit<32>, bit<32>>(report_result) repo_action = {
-        void apply(inout bit<32> value) {
+        void apply(inout bit<64> value) {
 
         }
     };
-    RegisterAction<bit<48>, bit<48>, bit<48>>(for_debug) debug_tbl = {
-        void apply(inout bit<48> value) {
+    RegisterAction<bit<64>, bit<48>, bit<48>>(for_debug) debug_tbl = {
+        void apply(inout bit<64> value) {
             //value = (bit<32>)ig_intr_from_prsr.global_tstamp;
-            value = ig_intr_md.ingress_mac_tstamp;
+            value = (bit<64>)ig_intr_md.ingress_mac_tstamp;
 
         }
     };
     apply {
-        bit<48> now_time;   // in-packet time
-        bit<48> before_time; // before report time
+        bit<64> now_time;   // in-packet time
+        bit<64> before_time; // before report time
         bit<32> diff_time;   // difference
-        now_time   = ig_intr_from_prsr.global_tstamp;
+        now_time   = (bit<64>)ig_intr_from_prsr.global_tstamp;
         for_debug.write(0, now_time);
         debug_tbl.execute(0);
         before_time = report_point.read(0);
         debug_tbl.execute(1);
+        //all_len = repo_action.push();
                 /*
         if ((bit<10>)now_time > 100) {
             all_cnt = all_cnt_len.execute(0, all_len);
