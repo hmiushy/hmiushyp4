@@ -10,6 +10,7 @@
 #define REPORT_TIME 100
 #define END_TIMESTEP 400
 
+
 struct for_debug_s {
   bit<64> g_t;
   bit<64> m_t;
@@ -31,8 +32,6 @@ control Count (
 
     /*------------------ Count Min Sketch registers and Hash -------------------*/
     Register<pair, bit<32>>(1, {0,0}) just_packet_cnt;
-    Register<bit<32>,bit<32>>(END_TIMESTEP) report_result;
-    Register<bit<64>, bit<48>>(1,0) report_point;
     Register<for_debug_s, bit<48>>(3,{0,0}) for_debug;
 
     /*------------------- All Packet Count registers Action --------------------*/
@@ -44,11 +43,13 @@ control Count (
             read_value2 = value.packet_length;
         }
     };
+    /*
     RegisterAction<bit<64>, bit<32>, bit<32>>(report_result) repo_action = {
         void apply(inout bit<64> value) {
 
         }
     };
+    */
     RegisterAction<for_debug_s, bit<48>, bit<64>>(for_debug) debug_tbl = {
       void apply(inout for_debug_s value){//, out bit<64> a, out bit<64> b) {
             value.g_t = (bit<64>)ig_intr_from_prsr.global_tstamp;
@@ -68,7 +69,7 @@ control Count (
         debug_tbl.execute(0);
         //now_time = debug_tbl.execute(0, before_time);
         //debug_tbl.write(0,)
-        before_time = report_point.read(0);
+        //before_time = report_point.read(0);
         //all_len = repo_action.push();
                 /*
         if ((bit<10>)now_time > 100) {
@@ -128,6 +129,10 @@ control SwitchEgress(
         in egress_intrinsic_metadata_from_parser_t eg_intr_md_from_prsr,
         inout egress_intrinsic_metadata_for_deparser_t eg_intr_md_for_dprsr,
         inout egress_intrinsic_metadata_for_output_port_t eg_intr_md_for_oport) {
+
+  
+    Register<bit<32>,bit<32>>(END_TIMESTEP) report_result;
+    Register<bit<64>, bit<48>>(1,0) report_point;
     apply {
         
     }   
