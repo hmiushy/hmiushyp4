@@ -13,7 +13,6 @@
 struct for_debug_s {
   bit<64> g_t;
   bit<64> m_t;
-  bit<64> count;
 }
 /************************************************************************* 
 **************  I N G R E S S   P R O C E S S I N G   ******************* 
@@ -34,7 +33,7 @@ control Count (
     Register<pair, bit<32>>(1, {0,0}) just_packet_cnt;
     Register<bit<32>,bit<32>>(END_TIMESTEP) report_result;
     Register<bit<64>, bit<48>>(1,0) report_point;
-    Register<for_debug_s, bit<48>>(1) for_debug;
+    Register<for_debug_s, bit<48>>(3,{0,0}) for_debug;
 
     /*------------------- All Packet Count registers Action --------------------*/
     RegisterAction<pair, bit<32>, bit<32>>(just_packet_cnt) all_cnt_len = {
@@ -54,7 +53,7 @@ control Count (
       void apply(inout for_debug_s value){//, out bit<64> a, out bit<64> b) {
             value.g_t = (bit<64>)ig_intr_from_prsr.global_tstamp;
             value.m_t = (bit<64>)ig_intr_md.ingress_mac_tstamp;
-            value.count = value.count+1;
+            
         }
     };
     apply {
@@ -66,7 +65,6 @@ control Count (
         for_debug_s fds;
         fds.g_t = now_time;
         fds.m_t = before_time;
-        
         debug_tbl.execute(0);
         //now_time = debug_tbl.execute(0, before_time);
         //debug_tbl.write(0,)
