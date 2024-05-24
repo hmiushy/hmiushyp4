@@ -17,8 +17,7 @@ already install the module. You have to set the values.
 ``` bash
 ## find the lib
 udo find ./install -path "*google/protobuf/internal/enum*"
-## copy the lib to the SDE_INSTALL_LIB (usually, these're installed
-when ran p4build code.)
+## copy the lib to the SDE_INSTALL_LIB (usually, these're installed when ran p4build code.)
 sudo cp -r /usr/lib/python3/dist-packages/google/protobuf ./install/lib/python3.8/site-packages/google/
 
 ```
@@ -27,4 +26,8 @@ Then, I got the error next:
     import grpc
 ModuleNotFoundError: No module named 'grpc'
 ```
-You can just install using pip. End.
+You can just install using pip. 
+```
+sudo pip3 install grpcio
+```
+End.

@@ -66,7 +66,8 @@ table.entry_add(dev_tgt,key_list=key_list,data_list=data_list,p4_name=bfrt_info.
 
 #bfrt.reg.pipe.SwitchIngress.ipv4_exact.dump()
 time_step = 0
-
+prepk = 0
+pre_p = [0, 0]
 while True:
     count_reg_name = "SwitchIngress.count.just_packet_cnt"
     debug_name     = "SwitchIngress.count.for_debug"
@@ -80,9 +81,6 @@ while True:
     debug_resp_0 = debug.entry_get(dev_tgt,
         [debug.make_key([bfrt_client.KeyTuple("$REGISTER_INDEX", 0)])], 
         {"from_hw":True})
-    debug_resp_1 = debug.entry_get(dev_tgt,
-        [debug.make_key([bfrt_client.KeyTuple("$REGISTER_INDEX", 1)])], 
-        {"from_hw":True})
     
     data,_ = next(count_resp)
     data_dict = data.to_dict()
@@ -93,12 +91,27 @@ while True:
 
     data,_ = next(debug_resp_0)
     data_dict = data.to_dict()
-    print(data_dict[debug_name+".f1"])
-    data,_ = next(debug_resp_1)
-    data_dict = data.to_dict()
-    print(data_dict[debug_name+".f1"][0]/10e8)
+    cnt = 0
+    tmp_pp = []
+    for tmp_name in data_dict.keys():
+        if debug_name in tmp_name:
+            str_len = len(debug_name)+1
+            see_val = tmp_name[str_len:len(tmp_name)]
+            see_k = debug_name+"."+see_val
+            val = data_dict[see_k][0]
+            print("{}: {} (d:{})  ".format(see_val, val, val - pre_p[cnt]), end="")
+            cnt += 1
+            tmp_pp.append(val)
+            
+    print()
+    pre_p = tmp_pp
+    # print(data_dict[debug_name+".f1"])
+    # data,_ = next(debug_resp_1)
+    # data_dict = data.to_dict()
     
-
+    # print(data_dict[debug_name+".f1"][0]-prepk,data_dict[debug_name+".f1"][0]/10e8)
+    
+    # prepk = data_dict[debug_name+".f1"][0]
     #bfrt.p4_main.pipe.SwitchIngress.count.for_debug.operation_register_sync
     #bfrt.p4_main.pipe.SwitchIngress.count.for_debug.dump()
     time_step += 1 
