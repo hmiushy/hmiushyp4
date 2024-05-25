@@ -18,7 +18,7 @@ while True:
         print("send to {} from veth0".format(tmp_ip))
         p1 = Ether(type=0x800)/IP(src="10.0.0.8", dst=tmp_ip)
         sendp(p1, iface="veth0")
-        time.sleep(1)
+        time.sleep(float(sys.argv[1]))
     except KeyboardInterrupt:
         print(" Stop.")
         break

@@ -60,8 +60,18 @@ struct switch_header_t {
     tcp_t        tcp;
 }
 
-struct switch_ingress_metadata_t {
+struct my_info_t {
+    bit<48> ts_nano;
+    bit<16> ts_micr;
+    bit<16> ts_micr_last;
+    bit<16> ts_miri;
+    bit<16> ts_miri_last;
+    bit<32> pkt_cnt;
+    bit<32> pkt_len;
+}
 
+struct switch_ingress_metadata_t {
+    my_info_t info;
 }
 
 struct switch_egress_metadata_t {
