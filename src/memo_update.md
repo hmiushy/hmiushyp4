@@ -17,6 +17,7 @@ chmod a+x aptsources-cleanup.pyz
 sudo ./aptsources-cleanup.pyz
 ```
 ### outdated solution
+Crate `apt-remove-duplicate-source-entries.py` and run `sudo python3 apt-remove-duplicate-source-entries.py`.
 ```python
 #!/usr/bin/python3
 """
