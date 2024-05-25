@@ -81,6 +81,7 @@ control Count (
     Register<bit<32>,bit<32>>(END_TIMESTEP) repo_cnt;
     Register<bit<32>,bit<32>>(END_TIMESTEP) repo_len;
     Register<bit<16>, bit<48>>(1,0) pre_repo_miri;
+    Register<bit<1>,_>(1,0) repo_come_flag;
     RegisterAction<bit<64>, bit<32>, bit<32>>(repo_cnt) repo_cnt_act = {
         void apply (inout bit<64> value) {
             value = (bit<64>)ig_md.info.pkt_cnt;
@@ -93,7 +94,7 @@ control Count (
     };
     RegisterAction<bit<16>, bit<32>, bit<16>>(pre_repo_miri) pre_repo_miri_act = {
         void apply (inout bit<16> value, out bit<16> read_value) {
-            if (ig_md.info.report_flag == 1) {
+            if (ig_md.info.report_flag == 0) {
                 value = (bit<16>)ig_md.info.ts_miri;
                 read_value = value;
             }
@@ -101,6 +102,12 @@ control Count (
                 value = value;
                 read_value = value;
             }
+        }
+    };
+    RegisterAction<bit<1>, _, bit<1>>(repo_come_flag) repo_come_flag_act = {
+        void apply(inout bit<1> value, out bit<1> read_value){
+            read_value = value;
+            value = 1;
         }
     };
     /*
@@ -202,18 +209,16 @@ control Count (
             ig_md.info.pkt_len = all_pkt_len_act.execute(0);
             
             bit<1> flag;
+            bit<1> repo_flag;
             flag = flag_act.execute(0); // get flag before 0 to 1
+            repo_flag = repo_come_flag_act.execute(0);
             ig_md.info.ts_nano      =  ig_intr_md.ingress_mac_tstamp;
             ig_md.info.ts_micr      = (bit<16>)ig_intr_md.ingress_mac_tstamp[21:10];
             ig_md.info.ts_micr_last = (bit<16>)ig_intr_md.ingress_mac_tstamp[11:0];
-            //ig_md.info.ts_miri      = (bit<16>)ig_intr_md.ingress_mac_tstamp[35:20];
-            //ig_md.info.ts_miri      = (bit<16>)ig_intr_md.ingress_mac_tstamp[31:20];
             ig_md.info.ts_miri      = (bit<16>)ig_intr_md.ingress_mac_tstamp[34:20];
-            /*
             ig_md.info.ts_miri_last = (bit<16>)ig_intr_md.ingress_mac_tstamp[21:0];
-            */
             ig_md.info.read_flag    = flag;
-            ig_md.info.report_flag  = flag;
+            ig_md.info.report_flag  = repo_flag;
             bit<48> tmp_pre_pkt_miri;
             bit<48> tmp_pre_pkt_nano;
             
@@ -222,8 +227,14 @@ control Count (
             //pre_pkt_miri_act.execute(0);
             //diff_time_miri = (bit<48>)pre_pkt_miri_act.execute(0);
             tmp_pre_pkt_miri  = (bit<48>)pre_pkt_miri_act.execute(0);  // pre-packet mirisec time get
-            tmp_pre_repo_miri = (bit<48>)pre_repo_miri_act.execute(0); // pre-report mirisec time get 
-            if (flag == 1) {
+            tmp_pre_repo_miri = (bit<48>)pre_repo_miri_act.execute(0); // pre-report mirisec time get
+            if (repo_flag == 0) {
+                // recode
+                //pre_repo_miri.write(0, (bit<16>)tmp_pre_repo_miri);
+                //repo_flag = repo_come_flag_act.execute(0);
+                //repo_come_flag.write(0, 1);
+            }
+            else if (repo_flag == 1) {
                 bit<48> diff_time_miri;
                 //pre_pkt_miri_act.execute(0);
                 //tmp_pre_pkt_miri = (bit<48>)pre_pkt_miri.read(0); // get a pre-packet for mirisecond
@@ -231,9 +242,11 @@ control Count (
                 
                 //diff_time_miri = (bit<48>)(ig_md.info.ts_miri - (bit<16>)tmp_pre_pkt_miri[31:20]);
                 diff_time_miri = (bit<48>)(ig_md.info.ts_miri - (bit<16>)tmp_pre_repo_miri[31:20]);
-                if (1000 <  (bit<16>)(diff_time_miri[31:20])) {
-                    ig_md.info.report_flag = 0;
-                    tmp_pre_repo_miri = (bit<48>)pre_repo_miri_act.execute(0);
+                if (2000 <  (bit<16>)(diff_time_miri[31:20])) {
+                    //repo_come_flag.write(0, 0);
+                    //pre_repo_miri.write(0, (bit<16>)tmp_pre_repo_miri);
+                    //ig_md.info.report_flag = 0;
+                    //tmp_pre_repo_miri = (bit<48>)pre_repo_miri_act.execute(0);
                     repo_cnt_act.execute(0);
                     repo_len_act.execute(0);
                     repo_cnt_act.enqueue();

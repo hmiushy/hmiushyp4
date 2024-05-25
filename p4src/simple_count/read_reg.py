@@ -126,7 +126,7 @@ while True:
     
     tbl_name = "SwitchIngress.count.pre_pkt_nano"
     look_tbl(tbl_name, dev_tgt)
-    tbl_name = "SwitchIngress.count.pre_pkt_miri"
+    tbl_name = "SwitchIngress.count.pre_repo_miri"
     look_tbl(tbl_name, dev_tgt)
 
     
