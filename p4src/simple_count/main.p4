@@ -38,20 +38,10 @@ control Count (
     bit<32> all_len;   // Save temporal packet length 
 
     /*------------------ Count Min Sketch registers and Hash -------------------*/
-    Register<pair, bit<32>>(1, {0,0}) just_packet_cnt;
-    Register<bit<32>, bit<32>>(1, 0) all_pkt_cnt;
-    Register<bit<32>, bit<32>>(1, 0) all_pkt_len;
     Register<for_debug_s, bit<48>>(3,{0,0}) for_debug;
     Register<my_time, bit<48>>(3,{0,0}) micro_sec;
-
-    Register<bit<16>, bit<48>>(1,0) before_pkt_nano;
-    Register<bit<16>, bit<48>>(1,0) before_pkt_miri;
     Register<bit<16>, bit<48>>(3,0) diff_nano;
     Register<bit<16>, bit<48>>(3,0) diff_miri;
-    
-    Register<bit<32>,bit<32>>(END_TIMESTEP) report_result_cnt;
-    Register<bit<32>,bit<32>>(END_TIMESTEP) report_result_len;
-    Register<bit<64>, bit<48>>(1,0) report_point;
     
     
     // action test2 (bit<32> read_value1, bit<32> read_value2){
@@ -59,6 +49,7 @@ control Count (
     //     ig_md.my_info.pkt_len = (bit<32>)read_value2;
     // }
     /*------------------- All Packet Count registers Action --------------------*/
+    Register<pair, bit<32>>(1, {0,0}) just_packet_cnt;
     RegisterAction<pair, bit<32>, bit<32>>(just_packet_cnt) all_cnt_len = {
         void apply(inout pair value, out bit<32> read_value1, out bit<32> read_value2){
             value.packet_count  = value.packet_count  + 1;
@@ -68,33 +59,67 @@ control Count (
             //test2(read_value1, read_value2);
         }
     };
+    
     /*------------------- All Packet Count registers Action --------------------*/
-    RegisterAction<bit<32>, bit<32>, bit<32>>(all_pkt_cnt) cnt_tbl = {
+    Register<bit<32>, bit<32>>(1, 0) all_pkt_cnt;
+    Register<bit<32>, bit<32>>(1, 0) all_pkt_len;
+    RegisterAction<bit<32>, bit<32>, bit<32>>(all_pkt_cnt) all_pkt_cnt_act = {
         void apply(inout bit<32> value, out bit<32> read_value) {
             value = value + 1;
             read_value = value;
         }
     };
-    /*------------------- All Packet Count registers Action --------------------*/
-    RegisterAction<bit<32>, bit<32>, bit<32>>(all_pkt_len) len_tbl = {
+    RegisterAction<bit<32>, bit<32>, bit<32>>(all_pkt_len) all_pkt_len_act = {
         void apply(inout bit<32> value, out bit<32> read_value) {
             value = value + (bit<32>)hdr.ipv4.total_len;
             read_value = value;
         }
     };
-    //RegisterAction<bit<64>, bit<32>, bit<32>>
+
     
-    RegisterAction<bit<64>, bit<32>, bit<32>>(report_result_cnt) repo_action_cnt = {
+    /*------------------- All Packet Count registers Action --------------------*/
+    Register<bit<32>,bit<32>>(END_TIMESTEP) repo_cnt;
+    Register<bit<32>,bit<32>>(END_TIMESTEP) repo_len;
+    Register<bit<16>, bit<48>>(1,0) pre_repo_miri;
+    RegisterAction<bit<64>, bit<32>, bit<32>>(repo_cnt) repo_cnt_act = {
         void apply (inout bit<64> value) {
             value = (bit<64>)ig_md.info.pkt_cnt;
         }
     };
-    RegisterAction<bit<64>, bit<32>, bit<32>>(report_result_len) repo_action_len = {
+    RegisterAction<bit<64>, bit<32>, bit<32>>(repo_len) repo_len_act = {
         void apply (inout bit<64> value) {
             value = (bit<64>)ig_md.info.pkt_len;
         }
     };
-    
+    RegisterAction<bit<16>, bit<32>, bit<16>>(pre_repo_miri) pre_repo_miri_act = {
+        void apply (inout bit<16> value, out bit<16> read_value) {
+            if (ig_md.info.report_flag == 1) {
+                value = (bit<16>)ig_md.info.ts_miri;
+                read_value = value;
+            }
+            else {
+                value = value;
+                read_value = value;
+            }
+        }
+    };
+    /*
+
+    RegisterAction<bit<16>, bit<48>, bit<16>>(pre_pkt_miri) pre_pkt_miri_act = {
+      void apply(inout bit<16> value, out bit<16> read_value){
+            //value = (bit<16>)(ig_intr_md.ingress_mac_tstamp[33:20]); // 1000 = 1 [sec]
+            if (ig_md.info.read_flag == 1) {
+                value = (bit<16>)ig_md.info.ts_miri;
+                read_value = value;
+            }
+            else {
+                value = value;
+            }
+            //else {read_value = 0;}
+        }
+    };
+
+
     RegisterAction<for_debug_s, bit<48>, bit<64>>(for_debug) debug_tbl = {
       void apply(inout for_debug_s value){//, out bit<64> a, out bit<64> b) {
             // This is [sec] // 2^30 = 1.073741824*(10^9)
@@ -108,7 +133,7 @@ control Count (
             
         }
     };
-    
+    */
     
     RegisterAction<my_time, bit<48>, bit<64>>(micro_sec) my_time_table = {
       void apply(inout my_time value){
@@ -128,55 +153,113 @@ control Count (
         }
     };
     
-    
-    RegisterAction<bit<16>, bit<48>, bit<64>>(before_pkt_nano) bfr_pkt_n = {
-      void apply(inout bit<16> value){
-            value = (bit<16>)(ig_intr_md.ingress_mac_tstamp[21:10]);
+    /*------------------- All Packet Count registers Action --------------------*/
+    Register<bit<32>, bit<48>>(1,0) pre_pkt_nano;
+    Register<bit<16>, bit<48>>(1,0) pre_pkt_miri;
+    Register<bit<1>,_>(1,0) pre_flag;
+    RegisterAction<bit<32>, bit<48>, bit<64>>(pre_pkt_nano) pre_pkt_nano_act = {
+      void apply(inout bit<32> value){
+            ///value = (bit<16>)(ig_intr_md.ingress_mac_tstamp[21:10]);
+            if (ig_md.info.read_flag == 1) {
+                value = (bit<32>)ig_md.info.ts_nano[47:10];
+                //value = (bit<32>)ig_intr_md.ingress_mac_tstamp[47:10];
+            }
         }
     };
-    RegisterAction<bit<16>, bit<48>, bit<64>>(before_pkt_miri) bfr_pkt_m = {
-      void apply(inout bit<16> value){
-            value = (bit<16>)(ig_intr_md.ingress_mac_tstamp[33:20]); // 1000 = 1 [sec]
+    RegisterAction<bit<16>, bit<48>, bit<16>>(pre_pkt_miri) pre_pkt_miri_act = {
+      void apply(inout bit<16> value, out bit<16> read_value){
+            //value = (bit<16>)(ig_intr_md.ingress_mac_tstamp[33:20]); // 1000 = 1 [sec]
+            if (ig_md.info.read_flag == 0) {
+                value = (bit<16>)ig_md.info.ts_miri;
+                read_value = value;
+            }
+            else {
+                value = value;
+            }
+            //else {read_value = 0;}
         }
     };
+    RegisterAction<bit<1>, _, bit<1>>(pre_flag) flag_act = {
+        void apply(inout bit<1> value, out bit<1> read_value){
+            read_value = value;
+            value = 1;
+        }
+    };
+
+    // Register<bit<16>,_>(1) diff_val;
+    // RegisterAction<bit<16>, bit<48>, bit<64>>(diff_val) diff_tbl = {
+    //   void apply(inout bit<16> value){
+    //         value = (bit<16>)(ig_intr_md.ingress_mac_tstamp[33:20]); // 1000 = 1 [sec]
+    //         //diff_val.write(a0, diff_time_miri[30:20]);
+    //     }
+    // };
     
     
     apply {
         if (hdr.ipv4.isValid()) {
-            all_cnt = all_cnt_len.execute(0, all_len);
-            ig_md.info.pkt_cnt = cnt_tbl.execute(0);
-            ig_md.info.pkt_len = len_tbl.execute(0);
-            ig_md.info.ts_nano =  ig_intr_md.ingress_mac_tstamp;
-            ig_md.info.ts_micr = (bit<16>)ig_intr_md.ingress_mac_tstamp[21:10];
+            //all_cnt = all_cnt_len.execute(0, all_len);
+            ig_md.info.pkt_cnt = all_pkt_cnt_act.execute(0);
+            ig_md.info.pkt_len = all_pkt_len_act.execute(0);
+            
+            bit<1> flag;
+            flag = flag_act.execute(0); // get flag before 0 to 1
+            ig_md.info.ts_nano      =  ig_intr_md.ingress_mac_tstamp;
+            ig_md.info.ts_micr      = (bit<16>)ig_intr_md.ingress_mac_tstamp[21:10];
             ig_md.info.ts_micr_last = (bit<16>)ig_intr_md.ingress_mac_tstamp[11:0];
-            ig_md.info.ts_miri = (bit<16>)ig_intr_md.ingress_mac_tstamp[35:20];
+            //ig_md.info.ts_miri      = (bit<16>)ig_intr_md.ingress_mac_tstamp[35:20];
+            //ig_md.info.ts_miri      = (bit<16>)ig_intr_md.ingress_mac_tstamp[31:20];
+            ig_md.info.ts_miri      = (bit<16>)ig_intr_md.ingress_mac_tstamp[34:20];
+            /*
             ig_md.info.ts_miri_last = (bit<16>)ig_intr_md.ingress_mac_tstamp[21:0];
+            */
+            ig_md.info.read_flag    = flag;
+            ig_md.info.report_flag  = flag;
+            bit<48> tmp_pre_pkt_miri;
+            bit<48> tmp_pre_pkt_nano;
             
-            bit<48> tmp_bfr_pkt_miri;
-            bit<48> diff_time_miri;
-            debug_tbl.execute(0);
-            
-            tmp_bfr_pkt_miri = (bit<48>)before_pkt_miri.read(0);
-            diff_time_miri = (bit<48>)(ig_md.info.ts_miri - tmp_bfr_pkt_miri[35:20]);
-            
-            bit<16> value;
-            value = 1000;
-            if (value >  (bit<16>)(diff_time_miri[33:20])) {
-                repo_action_cnt.execute(0);
-                repo_action_len.execute(0);
-                repo_action_cnt.push();
-                repo_action_len.push();
+            bit<48> tmp_pre_repo_miri;
+            pre_pkt_nano_act.execute(0); // nano sec time get
+            //pre_pkt_miri_act.execute(0);
+            //diff_time_miri = (bit<48>)pre_pkt_miri_act.execute(0);
+            tmp_pre_pkt_miri  = (bit<48>)pre_pkt_miri_act.execute(0);  // pre-packet mirisec time get
+            tmp_pre_repo_miri = (bit<48>)pre_repo_miri_act.execute(0); // pre-report mirisec time get 
+            if (flag == 1) {
+                bit<48> diff_time_miri;
+                //pre_pkt_miri_act.execute(0);
+                //tmp_pre_pkt_miri = (bit<48>)pre_pkt_miri.read(0); // get a pre-packet for mirisecond
+                //tmp_pre_pkt_nano = (bit<48>)pre_pkt_nano.read(0); // get a pre-packet for mirisecond
+                
+                //diff_time_miri = (bit<48>)(ig_md.info.ts_miri - (bit<16>)tmp_pre_pkt_miri[31:20]);
+                diff_time_miri = (bit<48>)(ig_md.info.ts_miri - (bit<16>)tmp_pre_repo_miri[31:20]);
+                if (1000 <  (bit<16>)(diff_time_miri[31:20])) {
+                    ig_md.info.report_flag = 0;
+                    tmp_pre_repo_miri = (bit<48>)pre_repo_miri_act.execute(0);
+                    repo_cnt_act.execute(0);
+                    repo_len_act.execute(0);
+                    repo_cnt_act.enqueue();
+                    repo_len_act.enqueue();
+                }
+                
+                if (1000 <  (bit<16>)(diff_time_miri[31:20])) {    
+                    //diff_tbl.execute(0);
+                    //all_pkt_cnt.clear(0);
+                    //all_pkt_len.clear(0);
+                    //cnt_tbl.clear(0);
+                    //len_tbl.clear(0);
+                }
             }
+            
+            
         }
         /*
         bit<64> now_time;   // in-packet time
-        bit<64> before_time; // before report time
+        bit<64> pre_time; // pre report time
         bit<32> diff_time;   // difference
         //now_time    = (bit<64>)ig_intr_from_prsr.global_tstamp;
-        //before_time = (bit<64>)ig_intr_md.ingress_mac_tstamp;
+        //pre_time = (bit<64>)ig_intr_md.ingress_mac_tstamp;
         for_debug_s fds;
         fds.g_t = now_time;
-        fds.m_t = before_time;
+        fds.m_t = pre_time;
         
         
         bit<10> t2;
@@ -186,9 +269,9 @@ control Count (
         my_time_table.execute(0);
         */
         //repo_action.execute(0);
-        //now_time = debug_tbl.execute(0, before_time);
+        //now_time = debug_tbl.execute(0, pre_time);
         //debug_tbl.write(0,)
-        //before_time = report_point.read(0);
+        //pre_time = report_point.read(0);
         //all_len = repo_action.push(all_cnt);
         //repo_action.push(all_len);
         //repo_action.synchronous(1);

@@ -68,6 +68,8 @@ struct my_info_t {
     bit<16> ts_miri_last;
     bit<32> pkt_cnt;
     bit<32> pkt_len;
+    bit<1>  read_flag;
+    bit<1>  report_flag;
 }
 
 struct switch_ingress_metadata_t {

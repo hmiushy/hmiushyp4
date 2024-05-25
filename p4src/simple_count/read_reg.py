@@ -35,8 +35,8 @@ print('Connected to BF Runtime Server')
 #
 # Get the information about the running program
 #
-#global bfrt_info
-#global brft_client
+global bfrt_info
+global brft_client
 bfrt_info = interface.bfrt_info_get()
 print('The target runs the program ', bfrt_info.p4_name_get())
 
@@ -67,108 +67,79 @@ for i in range(start,end+1):
 table.entry_add(dev_tgt,key_list=key_list,data_list=data_list,p4_name=bfrt_info.p4_name_get())
 
 #bfrt.reg.pipe.SwitchIngress.ipv4_exact.dump()
-time_step = 0
-prepk = 0
-pre_p = [0, 0]
-pre_p2 = [0, 0]
 
-    
-while True:
-    
-    count_name  = "SwitchIngress.count.just_packet_cnt"
-    debug_name  = "SwitchIngress.count.for_debug"
-    repo_name   = "SwitchIngress.count.report_result"
-    micros_name = "SwitchIngress.count.micro_sec"
-    count_reg = bfrt_info.table_get("pipe."+count_name)
-    debug     = bfrt_info.table_get("pipe."+debug_name)
-    repo      = bfrt_info.table_get("pipe."+repo_name)
-    micros    = bfrt_info.table_get("pipe."+micros_name)
-    print("------ =============================================== -------")
-    
-    ## get register info -------------------------------------------------- count
-    packet_count = 0
-    count_resp = count_reg.entry_get(dev_tgt,
-        [count_reg.make_key([bfrt_client.KeyTuple("$REGISTER_INDEX", 0)])], 
-        {"from_hw":True})
-    data,_ = next(count_resp)
-    data_dict = data.to_dict()
-    print("cnt: ",data_dict[count_name+".packet_count"]," len: ",
-        data_dict[count_name+".packet_length"])
-    packet_count += data_dict[count_name+".packet_count"][0]
-    print("total packet: {}".format(packet_count))
-    ## get register info -------------------------------------------------- count     END
-    ## get register info -------------------------------------------------- for_debug
-    
-    debug_resp = debug.entry_get(dev_tgt,
-        [debug.make_key([bfrt_client.KeyTuple("$REGISTER_INDEX", 0)])], 
-        {"from_hw":True})
-    data,_ = next(debug_resp)
-    data_dict = data.to_dict()
-    cnt = 0
-    tmp_pp = []
-    """
-    for tmp_name in data_dict.keys():
-        if debug_name in tmp_name:
-            str_len = len(debug_name)+1
-            see_val = tmp_name[str_len:len(tmp_name)]
-            see_k = debug_name+"."+see_val
-            val = data_dict[see_k][0]
-            print("{}: {} (d:{})  ".format(see_val, val, val - pre_p[cnt]), end="")
-            cnt += 1
-            tmp_pp.append(val)
-    
-    ## get register info -------------------------------------------------- for_debug END
-    ## get register info -------------------------------------------------- repo_name
-    end_time = 20
-    
-    
-    for i in range(end_time):
-        repo_resp = repo.entry_get(dev_tgt,
-            [repo.make_key([bfrt_client.KeyTuple("$REGISTER_INDEX", i)])], 
-            {"from_hw":True})
-        data,_ = next(repo_resp)
+def look_tbl_all(tbl_name,dev_tgt, num):
+    global bfrt_info
+    global bfrt_client
+    for i in range(num):
+        reg = bfrt_info.table_get("pipe."+tbl_name)
+        resp = reg.entry_get(dev_tgt,
+        [reg.make_key([bfrt_client.KeyTuple("$REGISTER_INDEX", i)]
+        )],{"from_hw":True})
+        data,_ = next(resp)
         data_dict = data.to_dict()
-        print(data_dict[repo_name+".f1"], end=" ")
-    """
+        for tmp_name in data_dict.keys():
+            if tbl_name in tmp_name:
+                str_len = len(tbl_name)+1
+                see_val = tmp_name[str_len:len(tmp_name)]
+                see_k = tbl_name+"."+see_val
+                val = data_dict[see_k][0]
+                print("{}:[{}]".format(i, val), end=" ")
     print()
-    
-    ## get register info -------------------------------------------------- repo_name END
-    """
-    ## get register info -------------------------------------------------- micros
-    resp = micros.entry_get(dev_tgt,
-        [micros.make_key([bfrt_client.KeyTuple("$REGISTER_INDEX", 0)])], 
-        {"from_hw":True})
+
+def look_tbl(tbl_name,dev_tgt):
+    global bfrt_info
+    global bfrt_client
+    reg = bfrt_info.table_get("pipe."+tbl_name)
+    resp = reg.entry_get(dev_tgt,
+        [reg.make_key([bfrt_client.KeyTuple("$REGISTER_INDEX",
+                                            0)])],
+                         {"from_hw":True})
     data,_ = next(resp)
     data_dict = data.to_dict()
-    cnt = 0
-    tmp_pp2 = []
     for tmp_name in data_dict.keys():
-        
-        if micros_name in tmp_name:
-            str_len = len(micros_name)+1
+        if tbl_name in tmp_name:
+            str_len = len(tbl_name)+1
             see_val = tmp_name[str_len:len(tmp_name)]
-            see_k = micros_name+"."+see_val
+            see_k = tbl_name+"."+see_val
             val = data_dict[see_k][0]
-            print("{}: {} (d:{})  ".format(see_val, val, val - pre_p2[cnt]), end="")
-            cnt += 1
-            tmp_pp2.append(val)
-    ## get register info -------------------------------------------------- micros END
-    """
+            print("{}.{}: {} ".format(tbl_name,see_val,
+                                      val,
+                                      end=" "))
+time_step = 0
+while True:
+    print("------ ====================================== -------")
+    ## get register info ------------------------- count
+    #tbl_name  = "SwitchIngress.count.just_packet_cnt"
+    #  plook_tbl(tbl_name, dev_tgt)
     
-    print(1)
-    #pre_p = tmp_pp
-    #pre_p2 = tmp_pp2
-    # print(data_dict[debug_name+".f1"])
-    # data,_ = next(debug_resp_1)
-    # data_dict = data.to_dict()
-    
-    # print(data_dict[debug_name+".f1"][0]-prepk,data_dict[debug_name+".f1"][0]/10e8)
-    
-    # prepk = data_dict[debug_name+".f1"][0]
-    #bfrt.p4_main.pipe.SwitchIngress.count.for_debug.operation_register_sync
-    #bfrt.p4_main.pipe.SwitchIngress.count.for_debug.dump()
-    time_step += 1 
+    ## get register info ------------------------- for_debug
+    #tbl_name  = "SwitchIngress.count.for_debug"
+    #look_tbl(tbl_name, dev_tgt)
 
+    ## get register info ------------------------- repo_name
+    reg_size = 20
+    tbl_name  = "SwitchIngress.count.repo_cnt"
+    look_tbl_all(tbl_name,dev_tgt, reg_size)
+    tbl_name  = "SwitchIngress.count.repo_len"
+    look_tbl_all(tbl_name,dev_tgt, reg_size)
+    
+    tbl_name = "SwitchIngress.count.pre_pkt_nano"
+    look_tbl(tbl_name, dev_tgt)
+    tbl_name = "SwitchIngress.count.pre_pkt_miri"
+    look_tbl(tbl_name, dev_tgt)
+
+    
+    ## get register info ------------------------- micro_name
+    #tbl_name = "SwitchIngress.count.micro_sec"
+    #look_tbl(tbl_name, dev_tgt)
+
+    ## get register info ------------------------- sec_name
+    #tbl_name = "SwitchIngress.count.diff_val"
+    #look_tbl(tbl_name, dev_tgt)
+    #tbl_name = "SwitchIngress.before_pkt_miri.diff_val"
+    #look_tbl(tbl_name, dev_tgt)
+    time_step += 1
     time.sleep(1)
         
     
