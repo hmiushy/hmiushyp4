@@ -20,6 +20,7 @@ struct my_time {
     bit<16> micro_s;
     bit<16> miri_s;
 }
+
 /************************************************************************* 
 **************  I N G R E S S   P R O C E S S I N G   ******************* 
 *************************************************************************/
@@ -80,7 +81,9 @@ control Count (
     /*------------------- All Packet Count registers Action --------------------*/
     Register<bit<32>,bit<32>>(END_TIMESTEP) repo_cnt;
     Register<bit<32>,bit<32>>(END_TIMESTEP) repo_len;
-    Register<bit<16>, bit<48>>(1,0) pre_repo_miri;
+    Register<bit<32>,_>(1,0) pre_repo_miri;
+    Register<bit<64>,_>(1,0) pre_repo_nano;
+    Register<bit<16>,_>(1,0) pre_repo_micro;
     Register<bit<1>,_>(1,0) repo_come_flag;
     RegisterAction<bit<64>, bit<32>, bit<32>>(repo_cnt) repo_cnt_act = {
         void apply (inout bit<64> value) {
@@ -92,10 +95,22 @@ control Count (
             value = (bit<64>)ig_md.info.pkt_len;
         }
     };
-    RegisterAction<bit<16>, bit<32>, bit<16>>(pre_repo_miri) pre_repo_miri_act = {
+    RegisterAction<bit<32>, bit<32>, bit<32>>(pre_repo_miri) pre_repo_miri_act = {
+        void apply (inout bit<32> value, out bit<32> read_value) {
+            if (ig_md.info.report_flag == 0) {
+                value = (bit<32>)ig_md.info.ts_miri;
+                read_value = value;
+            }
+            else {
+                value = value;
+                read_value = value;
+            }
+        }
+    };
+    RegisterAction<bit<16>, bit<32>, bit<16>>(pre_repo_micro) pre_repo_micro_act = {
         void apply (inout bit<16> value, out bit<16> read_value) {
             if (ig_md.info.report_flag == 0) {
-                value = (bit<16>)ig_md.info.ts_miri;
+                value = ig_md.info.ts_micr;
                 read_value = value;
             }
             else {
@@ -201,7 +216,7 @@ control Count (
     //     }
     // };
     
-    
+    Register<bit<16>,_>(1) ttt;
     apply {
         if (hdr.ipv4.isValid()) {
             //all_cnt = all_cnt_len.execute(0, all_len);
@@ -213,9 +228,9 @@ control Count (
             flag = flag_act.execute(0); // get flag before 0 to 1
             repo_flag = repo_come_flag_act.execute(0);
             ig_md.info.ts_nano      =  ig_intr_md.ingress_mac_tstamp;
-            ig_md.info.ts_micr      = (bit<16>)ig_intr_md.ingress_mac_tstamp[21:10];
+            ig_md.info.ts_micr      = (bit<16>)ig_intr_md.ingress_mac_tstamp[47:10];
             ig_md.info.ts_micr_last = (bit<16>)ig_intr_md.ingress_mac_tstamp[11:0];
-            ig_md.info.ts_miri      = (bit<16>)ig_intr_md.ingress_mac_tstamp[34:20];
+            ig_md.info.ts_miri      = (bit<32>)ig_intr_md.ingress_mac_tstamp[47:20];
             ig_md.info.ts_miri_last = (bit<16>)ig_intr_md.ingress_mac_tstamp[21:0];
             ig_md.info.read_flag    = flag;
             ig_md.info.report_flag  = repo_flag;
@@ -223,83 +238,15 @@ control Count (
             bit<48> tmp_pre_pkt_nano;
             
             bit<48> tmp_pre_repo_miri;
-            pre_pkt_nano_act.execute(0); // nano sec time get
-            //pre_pkt_miri_act.execute(0);
-            //diff_time_miri = (bit<48>)pre_pkt_miri_act.execute(0);
-            tmp_pre_pkt_miri  = (bit<48>)pre_pkt_miri_act.execute(0);  // pre-packet mirisec time get
-            tmp_pre_repo_miri = (bit<48>)pre_repo_miri_act.execute(0); // pre-report mirisec time get
-            if (repo_flag == 0) {
-                // recode
-                //pre_repo_miri.write(0, (bit<16>)tmp_pre_repo_miri);
-                //repo_flag = repo_come_flag_act.execute(0);
-                //repo_come_flag.write(0, 1);
-            }
-            else if (repo_flag == 1) {
-                bit<48> diff_time_miri;
-                //pre_pkt_miri_act.execute(0);
-                //tmp_pre_pkt_miri = (bit<48>)pre_pkt_miri.read(0); // get a pre-packet for mirisecond
-                //tmp_pre_pkt_nano = (bit<48>)pre_pkt_nano.read(0); // get a pre-packet for mirisecond
-                
-                //diff_time_miri = (bit<48>)(ig_md.info.ts_miri - (bit<16>)tmp_pre_pkt_miri[31:20]);
-                diff_time_miri = (bit<48>)(ig_md.info.ts_miri - (bit<16>)tmp_pre_repo_miri[31:20]);
-                if (2000 <  (bit<16>)(diff_time_miri[31:20])) {
-                    //repo_come_flag.write(0, 0);
-                    //pre_repo_miri.write(0, (bit<16>)tmp_pre_repo_miri);
-                    //ig_md.info.report_flag = 0;
-                    //tmp_pre_repo_miri = (bit<48>)pre_repo_miri_act.execute(0);
-                    repo_cnt_act.execute(0);
-                    repo_len_act.execute(0);
-                    repo_cnt_act.enqueue();
-                    repo_len_act.enqueue();
-                }
-                
-                if (1000 <  (bit<16>)(diff_time_miri[31:20])) {    
-                    //diff_tbl.execute(0);
-                    //all_pkt_cnt.clear(0);
-                    //all_pkt_len.clear(0);
-                    //cnt_tbl.clear(0);
-                    //len_tbl.clear(0);
-                }
-            }
+            bit<48> tmp_pre_repo_nano;
+            bit<48> tmp_pre_repo_micro;
+            //pre_pkt_nano_act.execute(0); // nano sec time get
+            //tmp_pre_pkt_miri  = (bit<48>)pre_pkt_miri_act.execute(0);
+            tmp_pre_repo_miri = (bit<48>)pre_repo_miri_act.execute(0);
+            //tmp_pre_repo_nano = (bit<48>)pre_repo_nano_act.execute(0);
+            tmp_pre_repo_micro = (bit<48>)pre_repo_micro_act.execute(0);
+            repo_come_flag.write(0,1);
             
-            
-        }
-        /*
-        bit<64> now_time;   // in-packet time
-        bit<64> pre_time; // pre report time
-        bit<32> diff_time;   // difference
-        //now_time    = (bit<64>)ig_intr_from_prsr.global_tstamp;
-        //pre_time = (bit<64>)ig_intr_md.ingress_mac_tstamp;
-        for_debug_s fds;
-        fds.g_t = now_time;
-        fds.m_t = pre_time;
-        
-        
-        bit<10> t2;
-        t2 = (bit<10>)report_result.read(0);
-        //if (t2 > 5) repo_action.pop();
-        repo_action.execute(0);
-        my_time_table.execute(0);
-        */
-        //repo_action.execute(0);
-        //now_time = debug_tbl.execute(0, pre_time);
-        //debug_tbl.write(0,)
-        //pre_time = report_point.read(0);
-        //all_len = repo_action.push(all_cnt);
-        //repo_action.push(all_len);
-        //repo_action.synchronous(1);
-        
-
-                /*
-        if ((bit<10>)now_time > 100) {
-            all_cnt = all_cnt_len.execute(0, all_len);
-            all_len = repo_action.push();
-            //just_packet_cnt.clear({0,0});
-        }
-        */
-        if (hdr.ipv4.isValid()) {
-            //all_cnt = all_cnt_len.execute(0, all_len);
-            //for_debug.write(0, all_len);
         }
     }
 }   

@@ -64,7 +64,7 @@ struct my_info_t {
     bit<48> ts_nano;
     bit<16> ts_micr;
     bit<16> ts_micr_last;
-    bit<16> ts_miri;
+    bit<32> ts_miri;
     bit<16> ts_miri_last;
     bit<32> pkt_cnt;
     bit<32> pkt_len;
