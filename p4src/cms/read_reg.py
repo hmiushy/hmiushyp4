@@ -164,14 +164,38 @@ while True:
     # tbl_name = com_name(func1, "dst_ip_reg")
     # look_tbl_all(tbl_name,dev_tgt, 32)
     
-    tbl_name = com_name(func1, "element_count_src")
+    tbl_name = com_name(func1, "just_packet_cnt")
+    #look_tbl(tbl_name,dev_tgt)
+    tbl_name = com_name(func1, "check_value")
     look_tbl(tbl_name,dev_tgt)
-    tbl_name = com_name(func1, "element_count_dst")
-    look_tbl(tbl_name,dev_tgt)
+
+    queue_size = 100
+    tbl_name = com_name(func1, "src_ip_queue")
+    #look_tbl_all(tbl_name,dev_tgt,queue_size)
     
-    tbl_name = com_name(func1, "arrival_miri")
-    now_time = get_time(tbl_name, dev_tgt)
+    # tbl_name = com_name(func1, "arrival_miri")
+    # now_time = get_time(tbl_name, dev_tgt)
     
+    # if now_time - pre_time < 0:
+    #     pre_time = now_time
+    # elif pre_time == -1:
+    #     pre_time = now_time
+    # elif now_time - pre_time > 10000:
+    #     reg_name = "just_packet_cnt"
+    #     tbl_name = com_name(func1, reg_name)
+    #     look_tbl(tbl_name, dev_tgt)
+    #     eval_str = bname+"."+func1+"."+reg_name+".clear()"
+    #     eval(eval_str)
+        
+        # for i in range(num_cms):
+        #     reg_name = "just_packet_cnt"
+        #     tbl_name = com_name(func1, reg_name)
+        #     look_tbl_all(tbl_name, dev_tgt, 32)
+        #     eval_str = bname+"."+func1+"."+reg_name+".clear()"
+        #     eval(eval_str)
+        #pre_time = now_time
+        
+    """
     if now_time - pre_time < 0:
         pre_time = now_time
     elif pre_time == -1:
@@ -191,16 +215,15 @@ while True:
         num_cms = 1
         for i in range(num_cms):
             reg_name = "cms_reg_"+str(i)
-            #print("---"+reg_name+"---")
             tbl_name = com_name(func1, reg_name)
             look_tbl_all(tbl_name, dev_tgt, 32)
             eval_str = bname+"."+func1+"."+reg_name+".clear()"
             eval(eval_str)
         pre_time = now_time
-        
+    """
     
     time_step += 1
-    time.sleep(1)
+    time.sleep(0.1)
 
 ############################## FINALLY ####################################
 #

@@ -66,9 +66,14 @@ struct my_info_t {
     bit<32> estimate_pkt_len;
     bit<32> srcip2idx;
     bit<32> dstip2idx;
+    bit<32> ip2idx;
     bit<1> src_exist;
     bit<1> dst_exist;
-    
+    bit<1> deq_flag;
+    bit<1> minus_flag;
+    bit<1> reset;
+    bit<1> cv;
+    bit<1> set_repo;
 }
 
 struct switch_ingress_metadata_t {

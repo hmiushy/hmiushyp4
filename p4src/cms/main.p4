@@ -15,7 +15,7 @@
 #define CRC_BIT 5      // Used at CRC   // 2/4/5/8/10/11/16
 #define IP_SIZE_BIT 5 // Used at ipget // 5/16
 #define THRESHOLD 0.3
-#define W_SIZE 1000       // The number of possessed packets
+#define W_SIZE 100      // The number of possessed packets
 
 // Pow(2,CRC_BIT) (Sketch Size)
 #if CRC_BIT == 2
@@ -60,14 +60,16 @@ struct cms_value {
 **************  I N G R E S S   P R O C E S S I N G   ******************* 
 *************************************************************************/
 control CMS (
-        inout switch_header_t hdr,
-        inout switch_ingress_metadata_t ig_md,
-        in ingress_intrinsic_metadata_t ig_intr_md,
-        in ingress_intrinsic_metadata_from_parser_t ig_intr_from_prsr,
-        inout ingress_intrinsic_metadata_for_deparser_t ig_intr_md_for_dprsr,
-        inout ingress_intrinsic_metadata_for_tm_t ig_intr_md_for_tm) {
-            
-    Register<bit<32>,bit<32>>(1) check_val;
+    inout switch_header_t hdr,
+    inout switch_ingress_metadata_t ig_md,
+    in ingress_intrinsic_metadata_t ig_intr_md,
+    in ingress_intrinsic_metadata_from_parser_t ig_intr_from_prsr,
+    inout ingress_intrinsic_metadata_for_deparser_t ig_intr_md_for_dprsr,
+    inout ingress_intrinsic_metadata_for_tm_t ig_intr_md_for_tm,
+    in bit<12> time_microsec,
+    in bit<12> time_mirisec,
+    in bit<8> time_sec) {
+    
     /*-------------------- Estimate packet count and length --------------------*/
     Register<bit<32>,bit<32>>(1) estimate_pcnt;
     Register<bit<32>,bit<32>>(1) estimate_plen;
@@ -103,9 +105,6 @@ control CMS (
     Hash<hash_t>(HashAlgorithm_t.CRC32) hash_5;
     Hash<hash_t>(HashAlgorithm_t.CRC32) hash_6;
     Hash<hash_t>(HashAlgorithm_t.CRC32) hash_7;
-
-
-    Register<bit<48>, bit<48>>(1,0) report_point;
 
     /*------------------- All Packet Count registers Action --------------------*/
     RegisterAction<pair, bit<32>, bit<32>>(just_packet_cnt) all_cnt_len = {
@@ -210,18 +209,41 @@ control CMS (
 
     /* ----- Mirisecond packet arrival time reg ----- */
     Register<bit<32>,_>(1,0) arrival_miri;
+    Register<bit<8>,_>(1,0) report_time;
+    Register<bit<8>,_>(1,0) rt_flag;
+    //MathUnit<bit<16>>(MathOp_t.DIV, 1, 16) rshift;
     RegisterAction<bit<32>, bit<32>, bit<32>>(arrival_miri) arrival_miri_act= {
         void apply (inout bit<32> value){
             value = (bit<32>)ig_md.info.ts_miri;
         }
     };
+    RegisterAction<bit<8>, _, bit<8>>(report_time) repo_act = {
+        void apply (inout bit<8> value, out bit<8> result_value){
+            if (ig_md.info.set_repo == 0) {
+                value = time_sec;
+            }
+            result_value = value;
+        }
+    };
+    RegisterAction<bit<8>, _, bit<8>>(rt_flag) rtf_act = {
+        void apply (inout bit<8> value, out bit<8> return_value){
+            return_value = value;
+            if (ig_md.info.cv == 1) {
+                value = 1;
+            }
+        }
+    };
+    
 
     /* ----- Store IP address */
     Register<bit<32>, bit<32>>(IP_SIZE, 0) src_ip_reg;  // store srcip 
     Register<bit<32>, bit<32>>(IP_SIZE, 0) dst_ip_reg;  // store dstip
     Register<bit<32>, bit<32>>(1, 0) element_count_src; // count element
     Register<bit<32>, bit<32>>(1, 0) element_count_dst; // count element
-    Register<bit<32>, bit<32>>(W_SIZE, 0) src_ip_queue; //
+    
+    
+    
+    Register<bit<32>, bit<32>>(W_SIZE, 0) src_ip_queue; // possess packets
     Register<bit<32>, bit<32>>(W_SIZE, 0) dst_ip_queue; // 
     Hash<ipsize_t>(HashAlgorithm_t.CRC32) hash_src_ip;  // 
     Hash<ipsize_t>(HashAlgorithm_t.CRC32) hash_dst_ip;
@@ -261,15 +283,34 @@ control CMS (
             }
         }
     };
-    action src_ip2index() {
-        ig_md.info.srcip2idx = (bit<32>)hash_src_ip.get({hdr.ipv4.src_addr, 32w8});
+    action src_ip2index(bit<32> tmp_ip) {
+        ig_md.info.srcip2idx = (bit<32>)hash_src_ip.get({tmp_ip, 32w8});
     }
-    action dst_ip2index() {
-        ig_md.info.dstip2idx = (bit<32>)hash_dst_ip.get({hdr.ipv4.dst_addr, 32w9});
+    action dst_ip2index(bit<32> tmp_ip) {
+        ig_md.info.dstip2idx = (bit<32>)hash_dst_ip.get({tmp_ip, 32w9});
     }
+    
+    RegisterAction<bit<32>, _, bit<32>> (src_ip_queue) src_ip_queue_act = {
+        void apply(inout bit<32> value, out bit<32> return_value) {
+            //if (1) {
+                value = hdr.ipv4.dst_addr;
+                return_value = value;
+            //}
+        }
+    };
+
+    
+    Register<bit<16>,_>(1,0) check_value;
+    RegisterAction<bit<16>,_,_> (check_value) cact = {
+        void apply(inout bit<16> value){
+            value = 1;
+        }
+    };
     
     apply {
         if (hdr.ipv4.isValid()) {
+            // Get to the packets of stream.
+            all_cnt = all_cnt_len.execute(0, all_len);
             // 2^20 = 1048576 (nearest 10^6) and get nano to mirisecond time
             ig_md.info.ts_miri = (bit<32>)ig_intr_md.ingress_mac_tstamp[47:20];
             key2index_0();
@@ -280,17 +321,15 @@ control CMS (
             key2index_5();
             key2index_6();
             key2index_7();
-
-            src_ip2index();
-            dst_ip2index();
+            
+            src_ip2index(hdr.ipv4.src_addr);
+            dst_ip2index(hdr.ipv4.dst_addr);
             // get the ip hash and get flag
             ig_md.info.src_exist = store_src_ip.execute(ig_md.info.srcip2idx);
             ig_md.info.dst_exist = store_dst_ip.execute(ig_md.info.dstip2idx);
             el_act_s.execute(0); // element count action src
             el_act_d.execute(0); // element count action dst
-
-            // Get to the packets of stream.
-            all_cnt = all_cnt_len.execute(0, all_len);
+            
             /* Update and Get Estimate packet count (cnt) and packet length (len) */
             val.v[0].cnt = cms_cnt_len_0.execute(val.v[0].idx, val.v[0].len);
             val.v[1].cnt = cms_cnt_len_1.execute(val.v[1].idx, val.v[1].len);
@@ -302,7 +341,6 @@ control CMS (
             val.v[7].cnt = cms_cnt_len_7.execute(val.v[7].idx, val.v[7].len);
             /* Save time */
             arrival_miri_act.execute(0);
-            check_val.write(0, val.v[0].idx);
             /* Compute Estimate packet count (cnt) and packet length (len) */
             bit<32> estimate_packet_count;
             bit<32> estimate_packet_length;
@@ -326,6 +364,45 @@ control CMS (
             ig_md.info.estimate_pkt_len = estimate_packet_length;
             estimate_pcnt_act.execute(0);
             estimate_plen_act.execute(0);
+            
+            
+            //src_ip_queue_act.execute(0); // set srcip
+            //dst_ip_queue_act.execute(0);
+            
+            
+
+            bit<8> rflag;
+            ig_md.info.cv = 1;
+            rflag = rtf_act.execute(0);
+            ig_md.info.set_repo = (bit<1>)rflag;
+            bit<8> repo_t;
+            repo_t = repo_act.execute(0);
+            bit<16> diff;
+            diff = (bit<16>)(time_sec - repo_t); // 
+            check_value.write(0, diff);
+            if (diff < REPORT_TIME) {
+                src_ip_queue_act.enqueue(); // set srcIP
+            }
+            else {
+                
+            }
+            
+            if ((bit<12>)all_cnt < W_SIZE) { // in window
+                //src_ip_queue_act.enqueue();
+            }
+            else { // over windowsize
+                bit<32> tmp_src_ip;
+                bit<32> tmp_dst_ip;
+                tmp_src_ip = src_ip_queue_act.dequeue();  // get removing ip
+                //src_ip_queue_act.enqueue();
+                //tmp_src_ip = src_ip_queue_act.dequeue();  // get removing ip
+                //tmp_dst_ip = dst_ip_queue_act.dequeue();
+                src_ip2index(tmp_src_ip); // get index       
+                //dst_ip2index(tmp_dst_ip);
+                //src_ip_queue_act.enqueue();
+                //dst_ip_queue_act.enqueue();
+                
+            }
             
         }
 
@@ -360,7 +437,11 @@ control SwitchIngress(
         default_action = drop();
     }
     apply {
-        cms.apply(hdr, ig_md, ig_intr_md, ig_intr_from_prsr, ig_intr_md_for_dprsr, ig_intr_md_for_tm);
+        cms.apply(hdr, ig_md, ig_intr_md, ig_intr_from_prsr,
+            ig_intr_md_for_dprsr, ig_intr_md_for_tm,
+            ig_intr_md.ingress_mac_tstamp[21:10],
+            ig_intr_md.ingress_mac_tstamp[31:20],
+            ig_intr_md.ingress_mac_tstamp[37:30]);
         ipv4_exact.apply();
     }
 }
