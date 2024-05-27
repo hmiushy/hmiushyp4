@@ -61,7 +61,7 @@ struct switch_header_t {
 }
 
 struct my_info_t {
-    bit<32> ts_miri;
+    
     bit<32> estimate_pkt_cnt;
     bit<32> estimate_pkt_len;
     bit<32> srcip2idx;
@@ -73,7 +73,12 @@ struct my_info_t {
     bit<1> minus_flag;
     bit<1> reset;
     bit<1> cv;
-    bit<1> set_repo;
+    bit<1> set_time;
+    bit<8> pre_time;
+    bit<8> rtflag;
+    bit<32> ts_sec;
+    bit<32> ts_miri;
+    bit<32> ts_micro;
 }
 
 struct switch_ingress_metadata_t {

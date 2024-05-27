@@ -155,7 +155,7 @@ def com_name(func1, reg_name):
     return "SwitchIngress."+func1+"."+reg_name
 
 while True:
-    print("------ ====================================== -------")
+    #print("------ ====================================== -------")
     bname = "bfrt.p4_main.pipe.SwitchIngress"
     func1 = "cms"
 
@@ -163,18 +163,33 @@ while True:
     # look_tbl_all(tbl_name,dev_tgt, 32)
     # tbl_name = com_name(func1, "dst_ip_reg")
     # look_tbl_all(tbl_name,dev_tgt, 32)
-    
-    tbl_name = com_name(func1, "just_packet_cnt")
-    #look_tbl(tbl_name,dev_tgt)
+    """
+    tbl_name = com_name(func1, "deq_count")
+    count = get_time(tbl_name,dev_tgt)
+    win_size = 10
+    if count > win_size:
+        reg_name = "deq_count"
+        eval_str = bname+"."+func1+"."+reg_name+".clear()"
+        eval(eval_str)
+        reg_name = "enq_count"
+        eval_str = bname+"."+func1+"."+reg_name+".clear()"
+        eval(eval_str)
+    """
     tbl_name = com_name(func1, "check_value")
-    look_tbl(tbl_name,dev_tgt)
-
-    queue_size = 100
+    look_tbl_all(tbl_name,dev_tgt, 3)
+    
+    tbl_name = com_name(func1, "check_value")
+    #look_tbl_all(tbl_name,dev_tgt, 2)
+    queue_size = 30
     tbl_name = com_name(func1, "src_ip_queue")
     #look_tbl_all(tbl_name,dev_tgt,queue_size)
     
-    # tbl_name = com_name(func1, "arrival_miri")
-    # now_time = get_time(tbl_name, dev_tgt)
+    tbl_name = com_name(func1, "arrival_miri")
+    #look_tbl(tbl_name,dev_tgt)
+    
+    tbl_name = com_name(func1, "next_report_miri")
+    #look_tbl(tbl_name,dev_tgt)
+    #now_time = get_time(tbl_name, dev_tgt)
     
     # if now_time - pre_time < 0:
     #     pre_time = now_time
