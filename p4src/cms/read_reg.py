@@ -146,6 +146,32 @@ def del_tbl(tbl_name,dev_tgt):
     resp = reg.entry_mod(dev_tgt,
         [reg.make_key([bfrt_client.KeyTuple("$REGISTER_INDEX",
                                             0)])])
+
+def cms_get(tbl_name,dev_tgt, num, t, cmsnum):
+    global bfrt_info
+    global bfrt_client
+    global pprint
+    out_filename = "./p4src/miura/cms/res/cms"+str(cmsnum)+"/t"+str(t)+".txt"
+    with open(out_filename,"w") as f:
+        for i in range(num):        
+            reg = bfrt_info.table_get("pipe."+tbl_name)
+            reg.operations_execute(dev_tgt, 'Sync')
+            resp = reg.entry_get(dev_tgt,
+                [reg.make_key([bfrt_client.KeyTuple("$REGISTER_INDEX", i)]
+                )],{"from_hw":True})
+            data,_ = next(resp)
+            data_dict = data.to_dict()
+            for tmp_name in data_dict.keys():
+                if tbl_name in tmp_name:
+                    str_len = len(tbl_name)+1
+                    see_val = tmp_name[str_len:len(tmp_name)]
+                    see_k = tbl_name+"."+see_val
+                    val = data_dict[see_k][0]
+                    #print("{}:[{}]".format(i, val), end=" ")
+                    #my_packet[see_val].append(val)
+                    tmp_res = "{} ".format(val)
+                    f.write(tmp_res)
+            
             
 time_step = 0
 pre_time = -1
@@ -175,42 +201,64 @@ while True:
         eval_str = bname+"."+func1+"."+reg_name+".clear()"
         eval(eval_str)
     """
-    tbl_name = com_name(func1, "check_value")
-    look_tbl_all(tbl_name,dev_tgt, 3)
     
-    tbl_name = com_name(func1, "check_value")
-    #look_tbl_all(tbl_name,dev_tgt, 2)
-    queue_size = 30
-    tbl_name = com_name(func1, "src_ip_queue")
-    #look_tbl_all(tbl_name,dev_tgt,queue_size)
-    
-    tbl_name = com_name(func1, "arrival_miri")
+    tbl_name = com_name(func1, "miri_sec")
+    now_time = get_time(tbl_name, dev_tgt)
+    look_tbl(tbl_name, dev_tgt)
+    #tbl_name = com_name(func1, "next_report_miri")
     #look_tbl(tbl_name,dev_tgt)
     
-    tbl_name = com_name(func1, "next_report_miri")
+    #tbl_name = com_name(func1, "check_value")
+    #look_tbl_all(tbl_name,dev_tgt, 10)
+    
+    #queue_size = 30
+    #tbl_name = com_name(func1, "src_ip_queue")
+    #look_tbl_all(tbl_name,dev_tgt,queue_size)
+    
+    #tbl_name = com_name(func1, "arrival_miri")
+    #look_tbl(tbl_name,dev_tgt)
+    
+    #tbl_name = com_name(func1, "next_report_miri")
     #look_tbl(tbl_name,dev_tgt)
     #now_time = get_time(tbl_name, dev_tgt)
     
-    # if now_time - pre_time < 0:
-    #     pre_time = now_time
-    # elif pre_time == -1:
-    #     pre_time = now_time
-    # elif now_time - pre_time > 10000:
-    #     reg_name = "just_packet_cnt"
-    #     tbl_name = com_name(func1, reg_name)
-    #     look_tbl(tbl_name, dev_tgt)
-    #     eval_str = bname+"."+func1+"."+reg_name+".clear()"
-    #     eval(eval_str)
+    if now_time - pre_time < 0:
+        pre_time = now_time
+    elif pre_time == -1:
+        pre_time = now_time
+    elif now_time - pre_time > 10000: # 10sec
+        pre_time = now_time
+        num_cms = 8
+        for i in range(num_cms):
+            reg_name = "cms_reg_"+str(i)+str(i)
+            tbl_name = com_name(func1, reg_name)
+            cms_get(tbl_name, dev_tgt, 32, time_step,i)
+            eval_str = bname+"."+func1+"."+reg_name+".clear()"
+            eval(eval_str)
         
-        # for i in range(num_cms):
-        #     reg_name = "just_packet_cnt"
-        #     tbl_name = com_name(func1, reg_name)
-        #     look_tbl_all(tbl_name, dev_tgt, 32)
-        #     eval_str = bname+"."+func1+"."+reg_name+".clear()"
-        #     eval(eval_str)
-        #pre_time = now_time
+        time_step += 1
         
     """
+
+    if now_time - pre_time < 0:
+        pre_time = now_time
+    elif pre_time == -1:
+        pre_time = now_time
+    elif now_time - pre_time > 10000: # 10sec
+        reg_name = "just_packet_cnt"
+        tbl_name = com_name(func1, reg_name)
+        look_tbl(tbl_name, dev_tgt)
+        eval_str = bname+"."+func1+"."+reg_name+".clear()"
+        eval(eval_str)
+        
+        for i in range(num_cms):
+            reg_name = "just_packet_cnt"
+            tbl_name = com_name(func1, reg_name)
+            look_tbl_all(tbl_name, dev_tgt, 32)
+            eval_str = bname+"."+func1+"."+reg_name+".clear()"
+            eval(eval_str)
+        pre_time = now_time
+
     if now_time - pre_time < 0:
         pre_time = now_time
     elif pre_time == -1:
@@ -237,8 +285,8 @@ while True:
         pre_time = now_time
     """
     
-    time_step += 1
-    time.sleep(0.1)
+    
+    #time.sleep(0.1)
 
 ############################## FINALLY ####################################
 #

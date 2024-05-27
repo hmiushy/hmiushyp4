@@ -14,11 +14,11 @@
 #define CMS_depth 8
 
 
-#define CRC_BIT 5      // Used at CRC   // 2/4/5/8/10/11/16
-#define IP_SIZE_BIT 5 // Used at ipget // 5/16
-#define THRESHOLD 0.3
-#define W_SIZE 5      // The number of possessed packets
-#define OBS_TIME 10000
+#define CRC_BIT     10    // Used at CRC   // 2/4 /5/8/10/11/16
+#define IP_SIZE_BIT 5     // Used at ipget // 5/16
+#define THRESHOLD   0.3
+#define W_SIZE      5     // The number of possessed packets
+#define OBS_TIME    10000
 
 // Pow(2,CRC_BIT) (Sketch Size)
 #if CRC_BIT == 2
@@ -91,15 +91,15 @@ control CMS (
     bit<32> all_len;   // Save temporal packet length 
     cms_value val;  // Aarray Structure // temporal values of cnt and len of pkt and index
     /*------------------ Count Min Sketch registers and Hash -------------------*/
-    Register<pair, bit<32>>(1, {0,0}) just_packet_cnt;
-    Register<pair, bit<32>>(CMS_width, {0,0}) cms_reg_0;
-    Register<pair, bit<32>>(CMS_width, {0,0}) cms_reg_1;
-    Register<pair, bit<32>>(CMS_width, {0,0}) cms_reg_2;
-    Register<pair, bit<32>>(CMS_width, {0,0}) cms_reg_3;
-    Register<pair, bit<32>>(CMS_width, {0,0}) cms_reg_4;
-    Register<pair, bit<32>>(CMS_width, {0,0}) cms_reg_5;
-    Register<pair, bit<32>>(CMS_width, {0,0}) cms_reg_6;
-    Register<pair, bit<32>>(CMS_width, {0,0}) cms_reg_7;
+    
+    Register<bit<32>, bit<32>>(CMS_width, 0) cms_reg_00;
+    Register<bit<32>, bit<32>>(CMS_width, 0) cms_reg_11;
+    Register<bit<32>, bit<32>>(CMS_width, 0) cms_reg_22;
+    Register<bit<32>, bit<32>>(CMS_width, 0) cms_reg_33;
+    Register<bit<32>, bit<32>>(CMS_width, 0) cms_reg_44;
+    Register<bit<32>, bit<32>>(CMS_width, 0) cms_reg_55;
+    Register<bit<32>, bit<32>>(CMS_width, 0) cms_reg_66;
+    Register<bit<32>, bit<32>>(CMS_width, 0) cms_reg_77;
     Hash<hash_t>(HashAlgorithm_t.CRC32) hash_0;
     Hash<hash_t>(HashAlgorithm_t.CRC32) hash_1;
     Hash<hash_t>(HashAlgorithm_t.CRC32) hash_2;
@@ -109,6 +109,43 @@ control CMS (
     Hash<hash_t>(HashAlgorithm_t.CRC32) hash_6;
     Hash<hash_t>(HashAlgorithm_t.CRC32) hash_7;
 
+    
+    /*------------------- Count Min Sketch registers Action --------------------*/
+    RegisterAction<bit<32>, bit<32>, bit<32>>(cms_reg_00) cms_cnt_len_00 = {
+        void apply (inout bit<32> value, out bit<32> read_value) {
+            value = value + 1; read_value = value; }
+    };
+    RegisterAction<bit<32>, bit<32>, bit<32>>(cms_reg_11) cms_cnt_len_11 = {
+        void apply (inout bit<32> value, out bit<32> read_value) {
+            value = value + 1; read_value = value; }
+    };
+    RegisterAction<bit<32>, bit<32>, bit<32>>(cms_reg_22) cms_cnt_len_22 = {
+        void apply (inout bit<32> value, out bit<32> read_value) {
+            value = value + 1; read_value = value; }
+    };
+    RegisterAction<bit<32>, bit<32>, bit<32>>(cms_reg_33) cms_cnt_len_33 = {
+        void apply (inout bit<32> value, out bit<32> read_value) {
+            value = value + 1; read_value = value; }
+    };
+    RegisterAction<bit<32>, bit<32>, bit<32>>(cms_reg_44) cms_cnt_len_44 = {
+        void apply (inout bit<32> value, out bit<32> read_value) {
+            value = value + 1; read_value = value; }
+    };
+    RegisterAction<bit<32>, bit<32>, bit<32>>(cms_reg_55) cms_cnt_len_55 = {
+        void apply (inout bit<32> value, out bit<32> read_value) {
+            value = value + 1; read_value = value; }
+    };
+    RegisterAction<bit<32>, bit<32>, bit<32>>(cms_reg_66) cms_cnt_len_66 = {
+        void apply (inout bit<32> value, out bit<32> read_value) {
+            value = value + 1; read_value = value; }
+    };
+    RegisterAction<bit<32>, bit<32>, bit<32>>(cms_reg_77) cms_cnt_len_77 = {
+        void apply (inout bit<32> value, out bit<32> read_value) {
+            value = value + 1; read_value = value; }
+    };
+
+    
+    Register<pair, bit<32>>(1, {0,0}) just_packet_cnt;
     /*------------------- All Packet Count registers Action --------------------*/
     RegisterAction<pair, bit<32>, bit<32>>(just_packet_cnt) all_cnt_len = {
         void apply(inout pair value, out bit<32> read_value1, out bit<32> read_value2){
@@ -118,7 +155,16 @@ control CMS (
             read_value2 = value.packet_length;
         }
     };
-    /*------------------- Count Min Sketch registers Action --------------------*/
+    /*
+    Register<pair, bit<32>>(CMS_width, {0,0}) cms_reg_0;
+    Register<pair, bit<32>>(CMS_width, {0,0}) cms_reg_1;
+    Register<pair, bit<32>>(CMS_width, {0,0}) cms_reg_2;
+    Register<pair, bit<32>>(CMS_width, {0,0}) cms_reg_3;
+    Register<pair, bit<32>>(CMS_width, {0,0}) cms_reg_4;
+    Register<pair, bit<32>>(CMS_width, {0,0}) cms_reg_5;
+    Register<pair, bit<32>>(CMS_width, {0,0}) cms_reg_6;
+    Register<pair, bit<32>>(CMS_width, {0,0}) cms_reg_7;
+    ///*------------------- Count Min Sketch registers Action --------------------
     RegisterAction<pair, bit<32>, bit<32>>(cms_reg_0) cms_cnt_len_0 = {
         void apply(inout pair value, out bit<32> read_value1, out bit<32> read_value2){
             value.packet_count  = value.packet_count  + 1;
@@ -183,7 +229,7 @@ control CMS (
             read_value2 = value.packet_length;
         }
     };
-
+    */
     /*---------------- Get index of register using hash Action------------------*/
     action key2index_0() {
         val.v[0].idx = (bit<32>)hash_0.get({hdr.ipv4.src_addr, hdr.ipv4.dst_addr, 32w0});
@@ -212,12 +258,8 @@ control CMS (
 
     /* ----- Mirisecond-time or Second-time packet arrival time reg ----- */
     Register<bit<32>,_>(1,0) arrival_miri;
-    Register<bit<8>,_>(1,0) report_time0; // second
-    Register<bit<8>,_>(1,0) report_time1; // second
     Register<bit<8>,_>(1,0) enq_count;
     Register<bit<8>,_>(1,0) deq_count; 
-    Register<bit<8>,_>(2,0) rt_flag;
-    Register<bit<1>,_>(2,0) rt_flag_last;
     //MathUnit<bit<16>>(MathOp_t.DIV, 1, 16) rshift;
     RegisterAction<bit<32>, bit<32>, bit<32>>(arrival_miri) arrival_miri_act= {
         void apply (inout bit<32> value, out bit<32> read_value){
@@ -233,34 +275,6 @@ control CMS (
             //value = (bit<32>)ig_md.info.ts_miri;
         }
     };
-    RegisterAction<bit<8>, _, bit<8>>(report_time0) repo_act0 = {
-        void apply (inout bit<8> value, out bit<8> read_value){
-            if (ig_md.info.set_time > 0) {
-                //value = time_sec;
-            }
-            else {
-                value = value;
-            }
-            read_value = value;
-        }
-    };
-    RegisterAction<bit<8>, _, bit<8>>(rt_flag) rtf_act = {
-        void apply (inout bit<8> value, out bit<8> read_value){
-            read_value = value;
-            if (ig_md.info.set_time > 0) {
-                value = 0;
-            }
-            else {
-                value = 1;
-            }
-        }
-    };
-    RegisterAction<bit<1>, _, bit<1>>(rt_flag_last) rtfl_act = {
-        void apply (inout bit<1> value, out bit<1> read_value){
-            read_value = value;
-            value = 0;
-        }
-    };
     
     RegisterAction<bit<8>, _, bit<8>>(enq_count) enq_act = {
         void apply (inout bit<8> value, out bit<8> read_value){
@@ -274,19 +288,6 @@ control CMS (
             read_value = value;
         }
     };
-    
-    action get_time() {
-        ig_md.info.set_time = 0;
-        ig_md.info.pre_time = repo_act0.execute(0);
-    }
-    action set_time() {
-        ig_md.info.set_time = 1;
-        ig_md.info.pre_time = repo_act0.execute(0);
-    }
-    action get_flag() {
-        ig_md.info.set_time = 0;
-        ig_md.info.rtflag = rtf_act.execute(0);
-    }
 
     /* ----- Store IP address */
     Register<bit<32>, bit<32>>(IP_SIZE, 0) src_ip_reg;  // store srcip 
@@ -358,11 +359,6 @@ control CMS (
         }
     };
 
-    Register<bit<32>,_>(1,0) head;
-    Register<bit<32>,_>(1,0) tail;
-    Register<bit<8>,_>(1,0) fill_flag;
-    
-
     /* Clock REPORT_TIME [sec] */
     Register<bit<32>,_>(1, 0) next_report;
     RegisterAction<bit<32>,_,bit<32>>(next_report) next_report_act = {
@@ -395,6 +391,12 @@ control CMS (
             read_value = 0;
         }
     };
+    Register<bit<32>,_>(1, 0) miri_sec;
+    RegisterAction<bit<32>, bit<32>, bit<32>>(miri_sec) miri_clock = {
+        void apply (inout bit<32> value, out bit<32> read_value) {
+            value = ig_md.info.ts_miri;
+        }
+    };
     
     Register<bit<32>,_>(1, 0) next_report_micro;
     RegisterAction<bit<32>,_,bit<32>>(next_report_micro) next_report_micro_act = {
@@ -412,7 +414,13 @@ control CMS (
             }
         }
     };
-    
+    //MathUnit<bit<32>>(MathOp_t.MUL, 1,1) power;
+    Register<bit<32>,_> (1,0) f2;
+    RegisterAction<bit<32>,_,bit<32>>(f2) f2_cal = {
+        void apply (inout bit<32> value) {
+            
+        }
+    };
     apply {
         if (hdr.ipv4.isValid()) {
             // Get to the packets of stream.
@@ -440,6 +448,7 @@ control CMS (
             el_act_d.execute(0); // element count action dst
             
             /* Update and Get Estimate packet count (cnt) and packet length (len) */
+            /*
             val.v[0].cnt = cms_cnt_len_0.execute(val.v[0].idx, val.v[0].len);
             val.v[1].cnt = cms_cnt_len_1.execute(val.v[1].idx, val.v[1].len);
             val.v[2].cnt = cms_cnt_len_2.execute(val.v[2].idx, val.v[2].len);
@@ -447,7 +456,16 @@ control CMS (
             val.v[4].cnt = cms_cnt_len_4.execute(val.v[4].idx, val.v[4].len);
             val.v[5].cnt = cms_cnt_len_5.execute(val.v[5].idx, val.v[5].len);
             val.v[6].cnt = cms_cnt_len_6.execute(val.v[6].idx, val.v[6].len);
-            val.v[7].cnt = cms_cnt_len_7.execute(val.v[7].idx, val.v[7].len);
+            val.v[7].cnt = cms_cnt_len_7.execute(val.v[7].idx, val.v[7].len);*/
+            
+            val.v[0].cnt = cms_cnt_len_00.execute(val.v[0].idx);
+            val.v[1].cnt = cms_cnt_len_11.execute(val.v[1].idx);
+            val.v[2].cnt = cms_cnt_len_22.execute(val.v[2].idx);
+            val.v[3].cnt = cms_cnt_len_33.execute(val.v[3].idx);
+            val.v[4].cnt = cms_cnt_len_44.execute(val.v[4].idx);
+            val.v[5].cnt = cms_cnt_len_55.execute(val.v[5].idx);
+            val.v[6].cnt = cms_cnt_len_66.execute(val.v[6].idx);
+            val.v[7].cnt = cms_cnt_len_77.execute(val.v[7].idx);
             /* Save time */
             arrival_miri_act.execute(0);
             /* Compute Estimate packet count (cnt) and packet length (len) */
@@ -473,18 +491,22 @@ control CMS (
             estimate_pcnt_act.execute(0);
             estimate_plen_act.execute(0);
 
-            bit<32> rv1;
-            bit<32> rv2;
+            miri_clock.execute(0);
+            bit<32> rv_sec;
+            bit<16> rv_miri;
             bit<32> rv3;
-            //rv1 = next_report_act.execute(0);
-            rv2 = next_report_miri_act.execute(0);
+            rv_sec = next_report_act.execute(0);
+            //rv_miri = (bit<16>)next_report_miri_act.execute(0);
             //rv3 = next_report_micro_act.execute(0);
-            if (rv2 > 0) {
+            /*
+            if (rv_miri > 0) {
                 // clear cms
-                //check_value.write(0, rv1);
-                check_value.write(1, rv2);
-                //check_value.write(2, rv3);
+                check_value.write(0, rv_sec);
+                bit<32> ansf2;
+                ansf2 = estimate_packet_count*estimate_packet_count;
+                
             }
+            */
             /*
             bit<32> now_h;
             bit<32> now_t;
