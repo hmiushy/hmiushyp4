@@ -1,13 +1,6 @@
 /* -*- P4_16 -*- */
-
 #include <core.p4>
 #include <t2na.p4>
-
-
-#include "std_hdrs.p4"
-#include "const.p4"
-#include "parser.p4"
-
 
 #define REPORT_TIME       5
 #define REPORT_TIME_MIRI  5000
@@ -24,19 +17,33 @@
 
 // Pow(2,CRC_BIT) (Sketch Size)
 #if CRC_BIT == 2
-    #define CMS_width 4   
+#define CMS_width 4
+#define MY_PADDING 6
+
 #elif CRC_BIT == 4
-    #define CMS_width 16  
+#define CMS_width 16
+#define MY_PADDING 4
+
 #elif CRC_BIT == 5
-    #define CMS_width 32  
+#define CMS_width 32
+#define MY_PADDING 3
+
 #elif CRC_BIT == 8
-    #define CMS_width 256 
+#define CMS_width 256
+#define MY_PADDING 8
+
 #elif CRC_BIT == 10
-    #define CMS_width 1024 
+#define CMS_width 1024
+#define MY_PADDING 6
+
 #elif CRC_BIT == 11
-    #define CMS_width 2048 
+#define CMS_width 2048
+#define MY_PADDING 7
+
 #elif CRC_BIT == 16
-    #define CMS_width 65536 
+#define CMS_width 65536
+#define MY_PADDING 8
+
 #endif
 
 // Pow(2,IP_SIZE_BIT)
@@ -52,20 +59,17 @@
 typedef bit<CRC_BIT>  hash_t;
 typedef bit<IP_SIZE_BIT> ipsize_t;
 
-
 header value_t {
     bit<32> cnt; // cnt: packet count
     bit<32> len; // len: packet length
-    bit<32> idx; // idx: index
+    hash_t idx; // idx: index
+    bit<MY_PADDING> pad;
 }
 
 struct cms_value {
     value_t[CMS_depth] v; // cnt, len, and idx
 }
 
-/************************************************************************* 
-**************  I N G R E S S   P R O C E S S I N G   ******************* 
-*************************************************************************/
 control CMS (
     inout switch_header_t hdr,
     inout switch_ingress_metadata_t ig_md,
@@ -97,108 +101,108 @@ control CMS (
     bit<32> tmp_ip_dst;
     cms_value val;  // Aarray Structure // temporal values of cnt and len of pkt and index
     /*------------------- All Packet Count registers Action --------------------*/    
-    Register<bit<32>, bit<32>>(CMS_width, 0) all_reg_cnt;
-    Register<bit<32>, bit<32>>(CMS_width, 0) all_reg_len;
+    Register<bit<32>, _>(CMS_width, 0) all_reg_cnt;
+    Register<bit<32>, _>(CMS_width, 0) all_reg_len;
     
     /*------------------ Count Min Sketch registers and Hash -------------------*/
-    Register<bit<32>, bit<32>>(CMS_width, 0) cms_reg_cnt_0;
-    Register<bit<32>, bit<32>>(CMS_width, 0) cms_reg_cnt_1;
-    Register<bit<32>, bit<32>>(CMS_width, 0) cms_reg_cnt_2;
-    Register<bit<32>, bit<32>>(CMS_width, 0) cms_reg_cnt_3;
-    Register<bit<32>, bit<32>>(CMS_width, 0) cms_reg_cnt_4;
-    Register<bit<32>, bit<32>>(CMS_width, 0) cms_reg_cnt_5;
-    Register<bit<32>, bit<32>>(CMS_width, 0) cms_reg_cnt_6;
-    Register<bit<32>, bit<32>>(CMS_width, 0) cms_reg_cnt_7;
+    Register<bit<32>, hash_t>(CMS_width, 0) cms_reg_cnt_0;
+    Register<bit<32>, hash_t>(CMS_width, 0) cms_reg_cnt_1;
+    Register<bit<32>, hash_t>(CMS_width, 0) cms_reg_cnt_2;
+    Register<bit<32>, hash_t>(CMS_width, 0) cms_reg_cnt_3;
+    Register<bit<32>, hash_t>(CMS_width, 0) cms_reg_cnt_4;
+    Register<bit<32>, hash_t>(CMS_width, 0) cms_reg_cnt_5;
+    Register<bit<32>, hash_t>(CMS_width, 0) cms_reg_cnt_6;
+    Register<bit<32>, hash_t>(CMS_width, 0) cms_reg_cnt_7;
     
-    Register<bit<32>, bit<32>>(CMS_width, 0) cms_reg_len_0;
-    Register<bit<32>, bit<32>>(CMS_width, 0) cms_reg_len_1;
-    Register<bit<32>, bit<32>>(CMS_width, 0) cms_reg_len_2;
-    Register<bit<32>, bit<32>>(CMS_width, 0) cms_reg_len_3;
-    Register<bit<32>, bit<32>>(CMS_width, 0) cms_reg_len_4;
-    Register<bit<32>, bit<32>>(CMS_width, 0) cms_reg_len_5;
-    Register<bit<32>, bit<32>>(CMS_width, 0) cms_reg_len_6;
-    Register<bit<32>, bit<32>>(CMS_width, 0) cms_reg_len_7;
+    Register<bit<32>, hash_t>(CMS_width, 0) cms_reg_len_0;
+    Register<bit<32>, hash_t>(CMS_width, 0) cms_reg_len_1;
+    Register<bit<32>, hash_t>(CMS_width, 0) cms_reg_len_2;
+    Register<bit<32>, hash_t>(CMS_width, 0) cms_reg_len_3;
+    Register<bit<32>, hash_t>(CMS_width, 0) cms_reg_len_4;
+    Register<bit<32>, hash_t>(CMS_width, 0) cms_reg_len_5;
+    Register<bit<32>, hash_t>(CMS_width, 0) cms_reg_len_6;
+    Register<bit<32>, hash_t>(CMS_width, 0) cms_reg_len_7;
     
-    RegisterAction<bit<32>, bit<32>, bit<32>>(all_reg_cnt) all_cnt = {
+    RegisterAction<bit<32>, _, bit<32>>(all_reg_cnt) all_cnt = {
         void apply (inout bit<32> value, out bit<32> read_value) {
             value = value + 1; read_value = value; }
     };
     
-    RegisterAction<bit<32>, bit<32>, bit<32>>(all_reg_len) all_len = {
+    RegisterAction<bit<32>, _, bit<32>>(all_reg_len) all_len = {
         void apply (inout bit<32> value, out bit<32> read_value) {
             value = value + (bit<32>)hdr.ipv4.total_len;
             read_value = value; }
     };
     /*------------------- Count Min Sketch registers Action --------------------*/
-    RegisterAction<bit<32>, bit<32>, bit<32>>(cms_reg_cnt_0) cms_cnt_0 = {
+    RegisterAction<bit<32>, hash_t, bit<32>>(cms_reg_cnt_0) cms_cnt_0 = {
         void apply (inout bit<32> value, out bit<32> read_value) {
             value = value + 1; read_value = value; }
     };
-    RegisterAction<bit<32>, bit<32>, bit<32>>(cms_reg_cnt_1) cms_cnt_1 = {
+    RegisterAction<bit<32>, hash_t, bit<32>>(cms_reg_cnt_1) cms_cnt_1 = {
         void apply (inout bit<32> value, out bit<32> read_value) {
             value = value + 1; read_value = value; }
     };
-    RegisterAction<bit<32>, bit<32>, bit<32>>(cms_reg_cnt_2) cms_cnt_2 = {
+    RegisterAction<bit<32>, hash_t, bit<32>>(cms_reg_cnt_2) cms_cnt_2 = {
         void apply (inout bit<32> value, out bit<32> read_value) {
             value = value + 1; read_value = value; }
     };
-    RegisterAction<bit<32>, bit<32>, bit<32>>(cms_reg_cnt_3) cms_cnt_3 = {
+    RegisterAction<bit<32>, hash_t, bit<32>>(cms_reg_cnt_3) cms_cnt_3 = {
         void apply (inout bit<32> value, out bit<32> read_value) {
             value = value + 1; read_value = value; }
     };
-    RegisterAction<bit<32>, bit<32>, bit<32>>(cms_reg_cnt_4) cms_cnt_4 = {
+    RegisterAction<bit<32>, hash_t, bit<32>>(cms_reg_cnt_4) cms_cnt_4 = {
         void apply (inout bit<32> value, out bit<32> read_value) {
             value = value + 1; read_value = value; }
     };
-    RegisterAction<bit<32>, bit<32>, bit<32>>(cms_reg_cnt_5) cms_cnt_5 = {
+    RegisterAction<bit<32>, hash_t, bit<32>>(cms_reg_cnt_5) cms_cnt_5 = {
         void apply (inout bit<32> value, out bit<32> read_value) {
             value = value + 1; read_value = value; }
     };
-    RegisterAction<bit<32>, bit<32>, bit<32>>(cms_reg_cnt_6) cms_cnt_6 = {
+    RegisterAction<bit<32>, hash_t, bit<32>>(cms_reg_cnt_6) cms_cnt_6 = {
         void apply (inout bit<32> value, out bit<32> read_value) {
             value = value + 1; read_value = value; }
     };
-    RegisterAction<bit<32>, bit<32>, bit<32>>(cms_reg_cnt_7) cms_cnt_7 = {
+    RegisterAction<bit<32>, hash_t, bit<32>>(cms_reg_cnt_7) cms_cnt_7 = {
         void apply (inout bit<32> value, out bit<32> read_value) {
             value = value + 1; read_value = value; }
     };
     /*------------------- Count Min Sketch registers Action --------------------*/
-    RegisterAction<bit<32>, bit<32>, bit<32>>(cms_reg_len_0) cms_len_0 = {
+    RegisterAction<bit<32>, hash_t, bit<32>>(cms_reg_len_0) cms_len_0 = {
         void apply (inout bit<32> value, out bit<32> read_value) {
             value = value + (bit<32>)hdr.ipv4.total_len;
             read_value = value; }
     };
-    RegisterAction<bit<32>, bit<32>, bit<32>>(cms_reg_len_1) cms_len_1 = {
+    RegisterAction<bit<32>, hash_t, bit<32>>(cms_reg_len_1) cms_len_1 = {
         void apply (inout bit<32> value, out bit<32> read_value) {
             value = value + (bit<32>)hdr.ipv4.total_len;
             read_value = value; }
     };
-    RegisterAction<bit<32>, bit<32>, bit<32>>(cms_reg_len_2) cms_len_2 = {
+    RegisterAction<bit<32>, hash_t, bit<32>>(cms_reg_len_2) cms_len_2 = {
         void apply (inout bit<32> value, out bit<32> read_value) {
             value = value + (bit<32>)hdr.ipv4.total_len;
             read_value = value; }
     };
-    RegisterAction<bit<32>, bit<32>, bit<32>>(cms_reg_len_3) cms_len_3 = {
+    RegisterAction<bit<32>, hash_t, bit<32>>(cms_reg_len_3) cms_len_3 = {
         void apply (inout bit<32> value, out bit<32> read_value) {
             value = value + (bit<32>)hdr.ipv4.total_len;
             read_value = value; }
     };
-    RegisterAction<bit<32>, bit<32>, bit<32>>(cms_reg_len_4) cms_len_4 = {
+    RegisterAction<bit<32>, hash_t, bit<32>>(cms_reg_len_4) cms_len_4 = {
         void apply (inout bit<32> value, out bit<32> read_value) {
             value = value + (bit<32>)hdr.ipv4.total_len;
             read_value = value; }
     };
-    RegisterAction<bit<32>, bit<32>, bit<32>>(cms_reg_len_5) cms_len_5 = {
+    RegisterAction<bit<32>, hash_t, bit<32>>(cms_reg_len_5) cms_len_5 = {
         void apply (inout bit<32> value, out bit<32> read_value) {
             value = value + (bit<32>)hdr.ipv4.total_len;
             read_value = value; }
     };
-    RegisterAction<bit<32>, bit<32>, bit<32>>(cms_reg_len_6) cms_len_6 = {
+    RegisterAction<bit<32>, hash_t, bit<32>>(cms_reg_len_6) cms_len_6 = {
         void apply (inout bit<32> value, out bit<32> read_value) {
             value = value + (bit<32>)hdr.ipv4.total_len;
             read_value = value; }
     };
-    RegisterAction<bit<32>, bit<32>, bit<32>>(cms_reg_len_7) cms_len_7 = {
+    RegisterAction<bit<32>, hash_t, bit<32>>(cms_reg_len_7) cms_len_7 = {
         void apply (inout bit<32> value, out bit<32> read_value) {
             value = value + (bit<32>)hdr.ipv4.total_len;
             read_value = value; }
@@ -215,28 +219,28 @@ control CMS (
     Hash<hash_t>(HashAlgorithm_t.CRC32) hash_6;
     Hash<hash_t>(HashAlgorithm_t.CRC32) hash_7;
     action key2index_0(bit<32> tmp_ip) {
-        val.v[0].idx = (bit<32>)hash_0.get({tmp_ip, 32w0});
+        val.v[0].idx = (hash_t)hash_0.get({tmp_ip, 32w0});
     }
     action key2index_1(bit<32> tmp_ip) {
-        val.v[1].idx = (bit<32>)hash_1.get({tmp_ip, 32w1});
+        val.v[1].idx = (hash_t)hash_1.get({tmp_ip, 32w1});
     }
     action key2index_2(bit<32> tmp_ip) {
-        val.v[2].idx = (bit<32>)hash_2.get({tmp_ip, 32w2});
+        val.v[2].idx = (hash_t)hash_2.get({tmp_ip, 32w2});
     }
     action key2index_3(bit<32> tmp_ip) {
-        val.v[3].idx = (bit<32>)hash_3.get({tmp_ip, 32w3});
+        val.v[3].idx = (hash_t)hash_3.get({tmp_ip, 32w3});
     }
     action key2index_4(bit<32> tmp_ip) {
-        val.v[4].idx = (bit<32>)hash_4.get({tmp_ip, 32w4});
+        val.v[4].idx = (hash_t)hash_4.get({tmp_ip, 32w4});
     }
     action key2index_5(bit<32> tmp_ip) {
-        val.v[5].idx = (bit<32>)hash_5.get({tmp_ip, 32w5});
+        val.v[5].idx = (hash_t)hash_5.get({tmp_ip, 32w5});
     }
     action key2index_6(bit<32> tmp_ip) {
-        val.v[6].idx = (bit<32>)hash_6.get({tmp_ip, 32w6});
+        val.v[6].idx = (hash_t)hash_6.get({tmp_ip, 32w6});
     }
     action key2index_7(bit<32> tmp_ip) {
-        val.v[7].idx = (bit<32>)hash_7.get({tmp_ip, 32w7});
+        val.v[7].idx = (hash_t)hash_7.get({tmp_ip, 32w7});
     }
 
     /* ----- Mirisecond-time or Second-time packet arrival time reg ----- */
@@ -417,22 +421,7 @@ control CMS (
             el_act_s.execute(0); // element count action src
             el_act_d.execute(0); // element count action dst
             
-            
-            /*
-            bit<32> estimate_packet_length;
-            estimate_packet_length = min(val.v[0].len, val.v[1].len);
-            estimate_packet_length = min(val.v[1].len, val.v[2].len); 
-            estimate_packet_length = min(val.v[2].len, val.v[3].len);
-            estimate_packet_length = min(val.v[3].len, val.v[4].len);
-            estimate_packet_length = min(val.v[4].len, val.v[5].len);
-            estimate_packet_length = min(val.v[5].len, val.v[6].len);
-            estimate_packet_length = min(val.v[6].len, val.v[7].len);
-
-            ig_md.info.estimate_pkt_len = estimate_packet_length;
-            estimate_plen_act.execute(0);
-            //*/
             /* Update and Get Estimate packet count (cnt) and packet length (len) */
-            
             val.v[0].cnt = cms_cnt_0.execute(val.v[0].idx);
             val.v[1].cnt = cms_cnt_1.execute(val.v[1].idx);
             val.v[2].cnt = cms_cnt_2.execute(val.v[2].idx);
@@ -441,6 +430,15 @@ control CMS (
             val.v[5].cnt = cms_cnt_5.execute(val.v[5].idx);
             val.v[6].cnt = cms_cnt_6.execute(val.v[6].idx);
             val.v[7].cnt = cms_cnt_7.execute(val.v[7].idx);
+            
+            val.v[0].len = cms_len_0.execute(val.v[0].idx);
+            val.v[1].len = cms_len_1.execute(val.v[1].idx);
+            val.v[2].len = cms_len_2.execute(val.v[2].idx);
+            val.v[3].len = cms_len_3.execute(val.v[3].idx);
+            val.v[4].len = cms_len_4.execute(val.v[4].idx);
+            val.v[5].len = cms_len_5.execute(val.v[5].idx);
+            val.v[6].len = cms_len_6.execute(val.v[6].idx);
+            val.v[7].len = cms_len_7.execute(val.v[7].idx);
             /* Compute Estimate packet count (cnt) and packet length (len) */
             bit<32> estimate_packet_count;
             estimate_packet_count = min(val.v[0].cnt, val.v[1].cnt);
@@ -450,9 +448,19 @@ control CMS (
             estimate_packet_count = min(val.v[4].cnt, val.v[5].cnt);
             estimate_packet_count = min(val.v[5].cnt, val.v[6].cnt);
             estimate_packet_count = min(val.v[6].cnt, val.v[7].cnt);
+            bit<32> estimate_packet_length;
+            estimate_packet_length = min(val.v[0].len, val.v[1].len);
+            estimate_packet_length = min(val.v[1].len, val.v[2].len); 
+            estimate_packet_length = min(val.v[2].len, val.v[3].len);
+            estimate_packet_length = min(val.v[3].len, val.v[4].len);
+            estimate_packet_length = min(val.v[4].len, val.v[5].len);
+            estimate_packet_length = min(val.v[5].len, val.v[6].len);
+            estimate_packet_length = min(val.v[6].len, val.v[7].len);
 
             ig_md.info.estimate_pkt_cnt = estimate_packet_count;
             estimate_pcnt_act.execute(0);
+            ig_md.info.estimate_pkt_len = estimate_packet_length;
+            estimate_plen_act.execute(0);
 
             miri_clock.execute(0);
             bit<32> rv_sec;
@@ -576,7 +584,8 @@ control CMS (
 
     }
 }
-control SwitchIngress(
+
+control CMS_b(
     inout switch_header_t hdr,
     inout switch_ingress_metadata_t ig_md,
     in ingress_intrinsic_metadata_t ig_intr_md,
@@ -615,28 +624,3 @@ control SwitchIngress(
     }
 }
 
-/************************************************************************* 
-****************  E G R E S S   P R O C E S S I N G   ******************* 
-*************************************************************************/ 
-control SwitchEgress(
-    inout switch_header_t hdr,
-    inout switch_egress_metadata_t eg_md,
-    in egress_intrinsic_metadata_t eg_intr_md,
-    in egress_intrinsic_metadata_from_parser_t eg_intr_md_from_prsr,
-    inout egress_intrinsic_metadata_for_deparser_t eg_intr_md_for_dprsr,
-    inout egress_intrinsic_metadata_for_output_port_t eg_intr_md_for_oport) {
-    apply {
-        
-    }   
-}
-/************************************************************************* 
-****************************  S W I T C H  ******************************
-*************************************************************************/
-Pipeline(SwitchIngressParser(),
-    SwitchIngress(),
-    SwitchIngressDeparser(),
-    SwitchEgressParser(),
-    SwitchEgress(),
-    SwitchEgressDeparser()) pipe;
-
-Switch(pipe) main;
