@@ -30,4 +30,12 @@ You can just install using pip.
 ```
 sudo pip3 install grpcio
 ```
+sometimes I got the below message:
+```bash
+Requirement already satisfied: grpcio in /usr/local/lib/python3.8/dist-packages (1.64.0)
+```
+I try to copy:
+```
+sudo cp -r /usr/local/lib/python3.8/dist-packages/grpc ./install/lib/python3.7/site-packages/
+```
 End.
