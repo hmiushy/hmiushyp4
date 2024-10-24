@@ -33,8 +33,9 @@ Error: Problem occurred while installing thrift <br>
   
 Error
 ----
+  Run `pip install packaging`<be><br>
   ![image](https://github.com/user-attachments/assets/62435d70-1962-4bfc-bf6b-6821f5ed9d5f) <br>
-  Run `pip install packaging`
+  
   log<br>
   ```
   2024-10-24 06:41:40,453: bf-p4c: error: unrecognized arguments: --bf-rt-schema /home/onie/barefoot-sde-9.7.0/bf-sde-9.7.0/pkgsrc/p4-examples/p4_16_programs/tna_operations/tna_operations.p4
