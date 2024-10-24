@@ -30,5 +30,10 @@ Error: Problem occurred while installing thrift <br>
   onie@ubuntu:~/9.7.0/p4studio$ Error: Problem occurred while installing thrift
   ```
   This is caused by a temporary error. Please run one more time. (一時的に実行できないだけだったので，もう一回実行するとうまくいった)
+  
+Error
+----
+  ![image](https://github.com/user-attachments/assets/62435d70-1962-4bfc-bf6b-6821f5ed9d5f)
+
     
 
