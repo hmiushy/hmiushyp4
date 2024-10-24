@@ -8,15 +8,15 @@ Things to do before executing `./p4studio interactive`
 
 Confirmations
 ---
-- You don't need to install dependencies.<br>
+- If you could get success the first time, you don't need to set `Y`. You should put `N` because installing dependencies takes a lot of time.
   ```
   ./p4studio interactive
   ```
   You get asking this question.
   ```
-  Do you want to install dependencies? [Y/n]: Y
+  Do you want to install dependencies? [Y/n]: Y → N
   ```
-  If you could get success the first time, you don't need to set `Y`. You should put `N` because installing dependencies takes a lot of time.
+  
 
 Error: Problem occurred while installing pip3 dependencies <br>
 ----
