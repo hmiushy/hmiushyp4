@@ -4,7 +4,9 @@ Things to do before executing `./p4studio interactive`
 - Install python-pip3 with `sudo apt install python3-pip`. <br>
 - Upgrade pip with `pip install -U pip` or `pip3 install -U pip`. <br>
 - Install requirements with `pip install -r requirements.txt`. <br>
-- Install `packaging` with `pip install packaging`. <be>
+- Install `packaging` with `pip install packaging`. <br>
+- Check the path of the BSP file and input it like this. <br>
+  ![image](https://github.com/user-attachments/assets/a9bdf42a-b857-41d4-972d-d04421218241)
 
 Confirmations
 ---
