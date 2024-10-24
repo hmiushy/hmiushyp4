@@ -7,7 +7,10 @@ Things to do before executing `./p4studio interactive`
 - Install `packaging` with `pip install packaging`. <br>
 - Check the path of the BSP file and input it like this. <br>
   ![image](https://github.com/user-attachments/assets/a9bdf42a-b857-41d4-972d-d04421218241)
-
+- Replace P4 file in `$SDE/pkgsrc/switch-p4-16/p4src/switch-tofino` to your P4 file. <br>
+  I replace all folders in `$SDE/pkgsrc/switch-p4-16/p4src`.  <br>
+  Note that make a backup, `$SDE/pkgsrc/switch-p4-16/p4src`.  <br>
+  
 Confirmations
 ---
 - If you could get success the first time, you don't need to set `Y`. You should put `N` because installing dependencies takes a lot of time.
