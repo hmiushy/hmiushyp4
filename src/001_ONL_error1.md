@@ -1,6 +1,7 @@
 Things to do before executing `./p4studio interactive`
 ---
 - Check the Python version with `python -V` and confirm version 3. <br>
+- Install python-pip3 with `sudo apt install python3-pip`. <br>
 - Install requirements with `pip install -r requirements.txt`. <br>
 - Install `packaging` with `pip install packaging`. <br>
 
