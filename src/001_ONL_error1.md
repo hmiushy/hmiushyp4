@@ -16,7 +16,9 @@ Confirmations
   ```
   Do you want to install dependencies? [Y/n]: Y → N
   ```
-  
+  You can check whether the results are successful or not.
+  ![image](https://github.com/user-attachments/assets/918d7c47-edc5-465f-bf11-25e1bd85faa3)
+
 
 Error: Problem occurred while installing pip3 dependencies <br>
 ----
