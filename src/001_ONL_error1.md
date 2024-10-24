@@ -29,5 +29,6 @@ Error: Problem occurred while installing thrift <br>
   2024-10-24 05:48:07,764: Cmd 'env python3 /home/onie/barefoot-sde-9.7.0/bf-sde-9.7.0/p4studio/dependencies/source/install_thrift.py --os-name Ubuntu --os-version 20.04 --jobs 8 --sde-install /home/onie/barefoot-sde-9.7.0/bf-sde-9.7.0/install --keyword apt-get --with-proto yes' took: 0:00:10.182233
   onie@ubuntu:~/9.7.0/p4studio$ Error: Problem occurred while installing thrift
   ```
+  This is caused by a temporary error. Please run one more time. (一時的に実行できないだけだったので，もう一回実行するとうまくいった)
     
 
