@@ -4,7 +4,19 @@ Things to do before executing `./p4studio interactive`
 - Install python-pip3 with `sudo apt install python3-pip`. <br>
 - Upgrade pip with `pip install -U pip` or `pip3 install -U pip`. <br>
 - Install requirements with `pip install -r requirements.txt`. <br>
-- Install `packaging` with `pip install packaging`. <br>
+- Install `packaging` with `pip install packaging`. <be>
+
+Confirmations
+---
+- You don't need to install dependencies.<br>
+  ```
+  ./p4studio interactive
+  ```
+  You get asking this question.
+  ```
+  Do you want to install dependencies? [Y/n]: Y
+  ```
+  If you could get success the first time, you don't need to set `Y`. You should put `N` because installing dependencies takes a lot of time.
 
 Error: Problem occurred while installing pip3 dependencies <br>
 ----
