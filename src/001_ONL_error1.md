@@ -33,7 +33,36 @@ Error: Problem occurred while installing thrift <br>
   
 Error
 ----
-  ![image](https://github.com/user-attachments/assets/62435d70-1962-4bfc-bf6b-6821f5ed9d5f)
+  ![image](https://github.com/user-attachments/assets/62435d70-1962-4bfc-bf6b-6821f5ed9d5f) <br>
+  Run `pip install packaging`
+  log<br>
+  ```
+  2024-10-24 06:41:40,453: bf-p4c: error: unrecognized arguments: --bf-rt-schema /home/onie/barefoot-sde-9.7.0/bf-sde-9.7.0/pkgsrc/p4-examples/p4_16_programs/tna_operations/tna_operations.p4
+  2024-10-24 06:41:40,453: Traceback (most recent call last):
+  2024-10-24 06:41:40,453:   File "/home/onie/barefoot-sde-9.7.0/bf-sde-9.7.0/install/share/p4c/p4c_src/config.py", line 47, in load_from_config
+  2024-10-24 06:41:40,453:     exec(compile(data, path, 'exec'), cfg_globals, None)
+  2024-10-24 06:41:40,453:   File "/home/onie/barefoot-sde-9.7.0/bf-sde-9.7.0/install/share/p4c/p4c_src/p4c.tofino.cfg", line 16, in <module>
+  2024-10-24 06:41:40,453:     import p4c_src.barefoot as bfn
+  2024-10-24 06:41:40,453:   File "/home/onie/barefoot-sde-9.7.0/bf-sde-9.7.0/install/share/p4c/p4c_src/barefoot.py", line 21, in <module>
+  2024-10-24 06:41:40,454:     from packaging import version
+  2024-10-24 06:41:40,454: ModuleNotFoundError: No module named 'packaging'
+  2024-10-24 06:41:40,454:
+  2024-10-24 06:41:40,454: Traceback (most recent call last):
+  2024-10-24 06:41:40,454:   File "/home/onie/barefoot-sde-9.7.0/bf-sde-9.7.0/install/share/p4c/p4c_src/config.py", line 47, in load_from_config
+  2024-10-24 06:41:40,454:     exec(compile(data, path, 'exec'), cfg_globals, None)
+  2024-10-24 06:41:40,454:   File "/home/onie/barefoot-sde-9.7.0/bf-sde-9.7.0/install/share/p4c/p4c_src/p4c.tofino2.cfg", line 16, in <module>
+  2024-10-24 06:41:40,454:     import p4c_src.barefoot as bfn
+  2024-10-24 06:41:40,454:   File "/home/onie/barefoot-sde-9.7.0/bf-sde-9.7.0/install/share/p4c/p4c_src/barefoot.py", line 21, in <module>
+  2024-10-24 06:41:40,454:     from packaging import version
+  2024-10-24 06:41:40,454: ModuleNotFoundError: No module named 'packaging'
+  2024-10-24 06:41:40,454:
+  2024-10-24 06:41:40,459: make[3]: *** [pkgsrc/p4-examples/CMakeFiles/tna_operations-tofino.dir/build.make:62: pkgsrc/p4-examples/tna_operations/tofino/bf-rt.json] Error 2
+  2024-10-24 06:41:40,459: make[2]: *** [CMakeFiles/Makefile2:10891: pkgsrc/p4-examples/CMakeFiles/tna_operations-tofino.dir/all] Error 2
+  2024-10-24 06:41:40,460: make[1]: *** [CMakeFiles/Makefile2:10787: pkgsrc/p4-examples/CMakeFiles/p4-16-programs.dir/rule] Error 2
+  2024-10-24 06:41:40,461: make: *** [Makefile:4311: p4-16-programs] Error 2
+  2024-10-24 06:41:40,462: Cmd 'make --jobs=8 p4-16-programs x1_tofino' took: 0:04:53.220271
+
+  ```
 
     
 
