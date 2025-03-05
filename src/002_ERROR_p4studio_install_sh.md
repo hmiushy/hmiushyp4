@@ -3,8 +3,7 @@
     - bf-sde-9.13.2# bash install.sh
 
   ## エラーの内容
-  
-    ```bash
+
     Executing: tar xf /tmp/dependencies-v2tymh1u/download/source/boost/boost_1_67_0.tar.bz2 --strip-components 1 -C /tmp/dependencies-v2tymh1u/source/boost
     bzip2: (stdin) is not a bzip2 file.
     tar: Child returned status 2
@@ -13,7 +12,7 @@
       - boost: error
     Error: SDE dependencies not installed.
     
-    ```
+
     
   ## 解決策
     1. `p4studio/dependencies/dependencies.yaml`内の`boost:`のURLを以下のように変更
