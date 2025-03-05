@@ -1,8 +1,9 @@
-# bf-sde-9.13, Error
-  ## 実行内容
-    - bf-sde-9.13.2# bash install.sh
+bf-sde-9.13, Error
+---
+## 実行内容
+  - bf-sde-9.13.2# bash install.sh
 
-  ## エラーの内容
+## エラーの内容
 
     Executing: tar xf /tmp/dependencies-v2tymh1u/download/source/boost/boost_1_67_0.tar.bz2 --strip-components 1 -C /tmp/dependencies-v2tymh1u/source/boost
     bzip2: (stdin) is not a bzip2 file.
