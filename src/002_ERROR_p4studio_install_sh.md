@@ -1,7 +1,7 @@
 bf-sde-9.13, Error
 ---
 ### 実行内容
-- bf-sde-9.13.2# bash install.sh
+<span style="color: green">**user@pc**</span>:<span style="color: blue">**bf-sde-9.13.2**</span>$ bash install.sh
 
 ### エラーの内容
 ```
