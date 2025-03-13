@@ -25,7 +25,8 @@
      cd ..
      ```
      ※Dockerfile内の`FROM debian:10`が`FROM debian/snapshot:buster-20210208`に変更されていることを確認
-  3. コンテナ作成
+     
+  4. コンテナ作成
      ```bash
      source .env
      docker run --cap-add=NET_ADMIN -it -v ${PROJECT_DIR}:/home/build/src --name my970 debian:build-docker-new
@@ -38,6 +39,7 @@
      ```bash
      docker exec -ti my970 bash
      ```
+     
 　4. profileとdebイメージを作成（profileは何に使うかわからない）<br>
      ```bash
      ##
