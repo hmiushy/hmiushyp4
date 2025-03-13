@@ -1,4 +1,5 @@
 # SDE-9.7.0セットアップ
+## 事前にインストール
   - Ubuntu20.04中にDockerをインストール
     ```bash
     sudo apt install docker.io
