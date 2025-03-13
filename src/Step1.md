@@ -32,20 +32,20 @@
 	  ```
 	  > **注意:** `Dockerfile` 内の `FROM debian:10` が `FROM debian/snapshot:buster-20210208` に変更されていることを確認
 
-    3. コンテナの作成
-		  ```bash
-		  source .env
-		  docker run --cap-add=NET_ADMIN -it -v ${PROJECT_DIR}:/home/build/src --name my970 debian:build-docker-new
-		  sudo -s
-		  # User/Password: build/build
-		  source .env
-		  ```
-		  > **補足:**
-		  > - `--name` の後は好きな名前をつけてOK
-		  > - 既存のコンテナに入るときは以下のコマンドを実行
-		  ```bash
-		  docker exec -ti my970 bash
-		  ```
+   3. コンテナの作成
+	  ```bash
+	  source .env
+	  docker run --cap-add=NET_ADMIN -it -v ${PROJECT_DIR}:/home/build/src --name my970 debian:build-docker-new
+	  sudo -s
+	  # User/Password: build/build
+	  source .env
+	  ```
+	  > **補足:**
+	  > - `--name` の後は好きな名前をつけてOK
+	  > - 既存のコンテナに入るときは以下のコマンドを実行
+	  ```bash
+	  docker exec -ti my970 bash
+	  ```
 
    4. profile と deb イメージの作成
 	  ```bash
