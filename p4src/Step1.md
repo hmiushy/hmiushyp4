@@ -42,5 +42,6 @@
      ```bash
      ./build.sh -p angel_eye -u switch
      ```
+     <br>
      実行後，`$SDE/tools/sonic/`内にdebイメージがある．<br>
      これをハードウェアに持って行って色々する
