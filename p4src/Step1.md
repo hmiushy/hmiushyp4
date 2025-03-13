@@ -41,8 +41,8 @@
      ```
      
 　5. profileとdebイメージを作成（profileは何に使うかわからない）<br>
-     ```
-     aaa
+     ```bash
+     ##
      ./build.sh -p angel_eye -u switch
      ```
      <br>
