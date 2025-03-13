@@ -16,7 +16,7 @@
 
 ---
 ### angel eye プラットフォーム向けの barefoot-sde-9.7.0 と SONiC イメージの構築
-> **Note:** `angel eye` プラットフォームが何かは不明
+`angel eye` プラットフォームが何かは不明
 
    1. ファイルの解凍
 	  ```bash
