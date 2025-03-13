@@ -41,11 +41,11 @@
      docker exec -ti my970 bash
      ```
      
-	4. profileとdebイメージを作成
-		```bash
-	     ./build.sh -p angel_eye -u switch
-	     （profileは何に使うかわからない）
-		```
-		
-	     実行後，`$SDE/tools/sonic/`内にdebイメージがある．<br>
-	     これをハードウェアに持って行って色々する
+    4. profileとdebイメージを作成
+       ```bash
+       ./build.sh -p angel_eye -u switch
+       （profileは何に使うかわからない）
+       ```
+       	
+       実行後，`$SDE/tools/sonic/`内にdebイメージがある．<br>
+       これをハードウェアに持って行って色々する
