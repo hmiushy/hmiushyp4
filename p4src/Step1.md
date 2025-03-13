@@ -40,9 +40,9 @@
      docker exec -ti my970 bash
      ```
      
-　4. profileとdebイメージを作成（profileは何に使うかわからない）<br>
+　5. profileとdebイメージを作成（profileは何に使うかわからない）<br>
      ```bash
-     ##
+     aaa
      ./build.sh -p angel_eye -u switch
      ```
      <br>
